@@ -45,7 +45,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Labs.WPF.TvShowOrganizer.Data\Labs.WPF.TvShowOrganizer.Data.csproj">
+    <ProjectReference Include="..\Data\Labs.WPF.TvShowOrganizer.Data.csproj">
       <Project>{db2c806a-4825-48d1-8df8-3f3deaa24720}</Project>
       <Name>Labs.WPF.TvShowOrganizer.Data</Name>
     </ProjectReference>

@@ -171,15 +171,15 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="Labs.WPF.Core\Labs.WPF.Core.csproj">
+    <ProjectReference Include="Core\Labs.WPF.TvShowOrganizer.Core.csproj">
       <Project>{82af094a-dc63-4484-9b6c-920bb1560d60}</Project>
-      <Name>Labs.WPF.Core</Name>
+      <Name>Labs.WPF.TvShowOrganizer.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="Labs.WPF.TvShowOrganizer.Data\Labs.WPF.TvShowOrganizer.Data.csproj">
+    <ProjectReference Include="Data\Labs.WPF.TvShowOrganizer.Data.csproj">
       <Project>{db2c806a-4825-48d1-8df8-3f3deaa24720}</Project>
       <Name>Labs.WPF.TvShowOrganizer.Data</Name>
     </ProjectReference>
-    <ProjectReference Include="Labs.WPF.TvShowOrganizer.Services\Labs.WPF.TvShowOrganizer.Services.csproj">
+    <ProjectReference Include="Services\Labs.WPF.TvShowOrganizer.Services.csproj">
       <Project>{dab792a9-85e6-4933-9e71-4400a1718423}</Project>
       <Name>Labs.WPF.TvShowOrganizer.Services</Name>
     </ProjectReference>

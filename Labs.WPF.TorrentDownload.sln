@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26430.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Labs.WPF.TorrentDownload", "Labs.WPF.TorrentDownload.csproj", "{B3A021B8-30A1-457C-B6E4-75A836B481A1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Labs.WPF.TvShowOrganizer", "Labs.WPF.TvShowOrganizer.csproj", "{B3A021B8-30A1-457C-B6E4-75A836B481A1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Labs.WPF.TvShowOrganizer.Data", "Labs.WPF.TvShowOrganizer.Data\Labs.WPF.TvShowOrganizer.Data.csproj", "{DB2C806A-4825-48D1-8DF8-3F3DEAA24720}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Labs.WPF.TvShowOrganizer.Data", "Data\Labs.WPF.TvShowOrganizer.Data.csproj", "{DB2C806A-4825-48D1-8DF8-3F3DEAA24720}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Labs.WPF.Core", "Labs.WPF.Core\Labs.WPF.Core.csproj", "{82AF094A-DC63-4484-9B6C-920BB1560D60}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Labs.WPF.TvShowOrganizer.Core", "Core\Labs.WPF.TvShowOrganizer.Core.csproj", "{82AF094A-DC63-4484-9B6C-920BB1560D60}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Labs.WPF.TvShowOrganizer.Services", "Labs.WPF.TvShowOrganizer.Services\Labs.WPF.TvShowOrganizer.Services.csproj", "{DAB792A9-85E6-4933-9E71-4400A1718423}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Labs.WPF.TvShowOrganizer.Services", "Services\Labs.WPF.TvShowOrganizer.Services.csproj", "{DAB792A9-85E6-4933-9E71-4400A1718423}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
