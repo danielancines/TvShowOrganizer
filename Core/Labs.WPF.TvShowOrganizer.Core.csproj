@@ -66,7 +66,9 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Converters\XValueConverter.cs" />
     <Compile Include="Handlers\ViewsHandler.cs" />
+    <Compile Include="Notifiers\INotify.cs" />
     <Compile Include="ViewModelBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

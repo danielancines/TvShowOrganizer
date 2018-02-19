@@ -15,6 +15,7 @@
     <xctk:BusyIndicator IsBusy="{Binding IsBusy}" BusyContent="{Binding BusyContent}">
         <Grid x:Name="MainGrid">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
@@ -23,7 +24,10 @@
                 <ColumnDefinition Width="100"/>
                 <ColumnDefinition Width="100"/>
             </Grid.ColumnDefinitions>
-            <ScrollViewer Margin="5" Grid.ColumnSpan="3">
+            <Border Grid.ColumnSpan="5" Margin="3" CornerRadius="2" BorderThickness="1" BorderBrush="Gray">
+                <TextBlock HorizontalAlignment="Center" Text="{Binding ErrorMessage}" Foreground="Red" FontWeight="Bold" FontSize="13"/>
+            </Border>
+            <ScrollViewer Margin="5" Grid.ColumnSpan="3" Grid.Row="1">
                 <ItemsControl ItemsSource="{Binding Shows}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
@@ -51,8 +55,8 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </ScrollViewer>
-            <Button Content="Ok" Command="{Binding OKCommand}" Grid.Row="1" Grid.Column="1" Margin="5" Cursor="Hand"/>
-            <Button Content="Cancel" Command="{Binding CancelCommand}" Grid.Row="1" Grid.Column="2" Margin="5" Cursor="Hand"/>
+            <Button Content="Ok" Command="{Binding OKCommand}" Grid.Row="2" Grid.Column="2" Margin="5" Cursor="Hand"/>
+            <!--<Button Content="Cancel" Command="{Binding CancelCommand}" Grid.Row="2" Grid.Column="2" Margin="5" Cursor="Hand"/>-->
         </Grid>
     </xctk:BusyIndicator>
 </Window>

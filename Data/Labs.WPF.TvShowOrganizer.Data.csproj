@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DTO\EpisodeDTO.cs" />
     <Compile Include="Migrations\201802162021249_DB Creation.cs" />
     <Compile Include="Migrations\201802162021249_DB Creation.Designer.cs">
       <DependentUpon>201802162021249_DB Creation.cs</DependentUpon>
@@ -55,9 +56,25 @@
     <Compile Include="Migrations\201802162042303_Update Max-Length Banner.Designer.cs">
       <DependentUpon>201802162042303_Update Max-Length Banner.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201802171242490_t.cs" />
+    <Compile Include="Migrations\201802171242490_t.Designer.cs">
+      <DependentUpon>201802171242490_t.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201802181924470_Update of Data.cs" />
+    <Compile Include="Migrations\201802181924470_Update of Data.Designer.cs">
+      <DependentUpon>201802181924470_Update of Data.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201802182249151_Update error on property name.cs" />
+    <Compile Include="Migrations\201802182249151_Update error on property name.Designer.cs">
+      <DependentUpon>201802182249151_Update error on property name.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="DTO\DTOBase\DTOObject.cs" />
+    <Compile Include="Model\Episode.cs" />
     <Compile Include="Model\TvShow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\EpisodeRepository.cs" />
+    <Compile Include="Repositories\Interface\IEpisodeRepository.cs" />
     <Compile Include="Repositories\TvShowRepository.cs" />
     <Compile Include="Repositories\Interface\ITvShowRepository.cs" />
     <Compile Include="TvShowOrganizerContext.cs" />
@@ -73,6 +90,21 @@
     <EmbeddedResource Include="Migrations\201802162042303_Update Max-Length Banner.resx">
       <DependentUpon>201802162042303_Update Max-Length Banner.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201802171242490_t.resx">
+      <DependentUpon>201802171242490_t.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201802181924470_Update of Data.resx">
+      <DependentUpon>201802181924470_Update of Data.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201802182249151_Update error on property name.resx">
+      <DependentUpon>201802182249151_Update error on property name.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Labs.WPF.TvShowOrganizer.Core.csproj">
+      <Project>{82af094a-dc63-4484-9b6c-920bb1560d60}</Project>
+      <Name>Labs.WPF.TvShowOrganizer.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

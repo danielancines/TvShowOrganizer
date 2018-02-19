@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -44,7 +45,13 @@ namespace Labs.WPF.TvShowOrganizer.Data.Model
 
         [MaxLength(20)]
         public string DatabaseId { get; set; }
+
         public DateTime? FirstAired { get; set; }
+
+        public double LastUpdated { get; set; }
+
+        [ForeignKey("Episode")]
+        public virtual ICollection<Episode> Episodes { get; set; }
 
         #endregion
     }

@@ -35,6 +35,20 @@ namespace Labs.WPF.Core
             }
         }
 
+        private string _errorMessage;
+        public string ErrorMessage
+        {
+            get { return this._errorMessage; }
+            set
+            {
+                if (this._errorMessage == value)
+                    return;
+
+                this._errorMessage = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
         #endregion
 
         #region INotifyPropertyChanged Members

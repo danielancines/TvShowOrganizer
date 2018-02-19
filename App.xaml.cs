@@ -22,6 +22,7 @@ namespace Labs.WPF.TorrentDownload
             container.RegisterType<ITvShowDatabase, TVDatabaseService>();
             container.RegisterType<DbContext, TvShowOrganizerContext>();
             container.RegisterType<ITvShowRepository, TvShowRepository>();
+            container.RegisterType<IEpisodeRepository, EpisodeRepository>();
 
             var mainWindow = container.Resolve<MainWindow>();
             mainWindow.Show();

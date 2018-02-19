@@ -12,5 +12,6 @@ namespace Labs.WPF.TvShowOrganizer.Data.Repositories.Interface
         int Add(TvShow tvShow);
         bool Update(TvShow tvShow);
         bool Remove(TvShow tvShow);
+        bool Exists(int serieId);
     }
 }

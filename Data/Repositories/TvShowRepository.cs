@@ -2,7 +2,7 @@
 using Labs.WPF.TvShowOrganizer.Data.Repositories.Interface;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
+using System.Linq;
 
 namespace Labs.WPF.TvShowOrganizer.Data.Repositories
 {
@@ -23,12 +23,18 @@ namespace Labs.WPF.TvShowOrganizer.Data.Repositories
 
         public TvShow GetById(Guid id)
         {
-            throw new NotImplementedException();
+            var tvShow = this._context.TvShows.FirstOrDefault(t => t.ID.Equals(id));
+            this._context.Entry(tvShow)
+                .Collection(t => t.Episodes)
+                .Load();
+
+            return tvShow;
         }
 
         public TvShow GetBySerieId(int serieId)
         {
-            throw new NotImplementedException();
+            var tvShow = this._context.TvShows.FirstOrDefault(t => t.SeriesID.Equals(serieId));
+            return tvShow;
         }
 
         public bool Remove(TvShow tvShow)
@@ -44,6 +50,11 @@ namespace Labs.WPF.TvShowOrganizer.Data.Repositories
         public bool Update(TvShow tvShow)
         {
             throw new NotImplementedException();
+        }
+
+        public bool Exists(int serieId)
+        {
+            return this.GetBySerieId(serieId) != null;
         }
     }
 }
