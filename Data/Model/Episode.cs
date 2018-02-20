@@ -20,7 +20,7 @@ namespace Labs.WPF.TvShowOrganizer.Data.Model
         [Required]
         public int EpisodeId { get; set; }
 
-        [Required, MaxLength(50)]
+        [Required, MaxLength(100)]
         public string Name { get; set; }
 
         [Required]

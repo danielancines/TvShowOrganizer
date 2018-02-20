@@ -1,4 +1,5 @@
-﻿using Labs.WPF.TvShowOrganizer.Data.Model;
+﻿using Labs.WPF.TvShowOrganizer.Data.DTO;
+using Labs.WPF.TvShowOrganizer.Data.Model;
 using Labs.WPF.TvShowOrganizer.Data.Repositories.Interface;
 using Labs.WPF.TvShowOrganizer.Services.Contracts;
 using Newtonsoft.Json.Linq;
@@ -13,9 +14,11 @@ namespace Labs.WPF.TvShowOrganizer.Services
     {
         #region Constructor
 
-        public TheMovieDbService(IServerRepository serverRepository)
+        public TheMovieDbService(IServerRepository serverRepository, ITvShowRepository tvShowRepository, IEpisodeRepository episodeRepository)
         {
             this._serverRepository = serverRepository;
+            this._tvShowRepository = tvShowRepository;
+            this._episodeRepository = episodeRepository;
         }
 
         #endregion
@@ -23,6 +26,8 @@ namespace Labs.WPF.TvShowOrganizer.Services
         #region Fields
 
         private IServerRepository _serverRepository;
+        private ITvShowRepository _tvShowRepository;
+        private IEpisodeRepository _episodeRepository;
 
         #endregion
 
@@ -42,31 +47,6 @@ namespace Labs.WPF.TvShowOrganizer.Services
                     continue;
 
                 episodes.AddRange(await this.GetEpisodesData(tvShowId, serieID, episode.Value<string>("season_number"), server.BaseUri, server.ApiKey));
-            }
-
-            return episodes;
-        }
-
-        private async Task<IEnumerable<Episode>> GetEpisodesData(Guid tvShowId, int serieID, string season, string baseUri, string apiKey)
-        {
-            var episodes = new List<Episode>();
-            HttpClient client = new HttpClient() { BaseAddress = new Uri(baseUri) };
-            var response = await client.GetStringAsync(string.Format(Uris.EpisodesURI, serieID, season, apiKey));
-            var jObject = JObject.Parse(response);
-
-            foreach (var episode in jObject["episodes"])
-            {
-                episodes.Add(new Episode()
-                {
-                    ID = Guid.NewGuid(),
-                    Name = episode.Value<string>("name"),
-                    EpisodeId = episode.Value<int>("id"),
-                    Number = episode.Value<int>("episode_number"),
-                    Overview = episode.Value<string>("overview"),
-                    Season = Convert.ToInt32(season),
-                    TvShowId = tvShowId,
-                    FirstAired = string.IsNullOrEmpty(episode.Value<string>("air_date")) ? default(DateTime?) : episode.Value<DateTime>("air_date")
-                });
             }
 
             return episodes;
@@ -98,9 +78,80 @@ namespace Labs.WPF.TvShowOrganizer.Services
             return shows;
         }
 
-        public Task<bool> UpdateShows()
+        public async Task<bool> UpdateShows()
         {
-            throw new NotImplementedException();
+            var server = this._serverRepository.GetServer();
+            var hadNewEpisodes = false;
+            EpisodeDTO lastEpisode;
+
+            foreach (var serie in this._tvShowRepository.Series())
+            {
+                lastEpisode = this._episodeRepository.GetLastEpisodeBySeasonAndFirstAired(serie.ID);
+                if (lastEpisode == null)
+                    continue;
+
+                var result = await this.SaveNewEpisodes(serie.ID, serie.SeriesID, lastEpisode.Season, server.BaseUri, server.ApiKey);
+                if (!result)
+                    result = await this.SaveNewEpisodes(serie.ID, serie.SeriesID, ++lastEpisode.Season, server.BaseUri, server.ApiKey);
+
+                if (result)
+                    hadNewEpisodes = true;
+            }
+
+            return hadNewEpisodes;
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private async Task<bool> SaveNewEpisodes(Guid serieID, int seriesID, int season, string baseUri, string apiKey)
+        {
+            var result = false;
+            foreach (var episode in await this.GetEpisodesData(serieID, seriesID, season.ToString(), baseUri,apiKey))
+            {
+                if (this._episodeRepository.ExistsByEpisodeId(episode.EpisodeId))
+                    continue;
+
+                this._episodeRepository.Add(episode);
+                result = true;
+            }
+
+            return result;
+        }
+
+        private async Task<IEnumerable<Episode>> GetEpisodesData(Guid tvShowId, int serieID, string season, string baseUri, string apiKey)
+        {
+            var episodes = new List<Episode>();
+            HttpClient client = new HttpClient() { BaseAddress = new Uri(baseUri) };
+
+            try
+            {
+                var response = await client.GetStringAsync(string.Format(Uris.EpisodesURI, serieID, season, apiKey));
+                var jObject = JObject.Parse(response);
+
+                foreach (var episode in jObject["episodes"])
+                {
+                    episodes.Add(new Episode()
+                    {
+                        ID = Guid.NewGuid(),
+                        Name = episode.Value<string>("name"),
+                        EpisodeId = episode.Value<int>("id"),
+                        Number = episode.Value<int>("episode_number"),
+                        Overview = episode.Value<string>("overview"),
+                        Season = Convert.ToInt32(season),
+                        TvShowId = tvShowId,
+                        FirstAired = string.IsNullOrEmpty(episode.Value<string>("air_date")) ? default(DateTime?) : episode.Value<DateTime>("air_date")
+                    });
+                }
+
+            }
+            catch(Exception ex)
+            {
+
+            }
+
+            return episodes;
         }
 
         #endregion

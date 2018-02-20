@@ -11,10 +11,13 @@ namespace Labs.WPF.TvShowOrganizer.Data.Repositories.Interface
         Episode GetBySerieId(int serieId);
         IEnumerable<Episode> AllEpisodes();
         IEnumerable<EpisodeDTO> NotDownloadedEpisodes();
+        EpisodeDTO GetLastEpisodeBySeasonAndFirstAired(Guid serieID);
         int Add(Episode episode);
         int AddRange(IEnumerable<Episode> episodes);
         bool Update(EpisodeDTO episode);
         bool Remove(Episode episode);
         bool UpdateTorrentURI(Guid id, string uri);
+        bool Exists(Guid id);
+        bool ExistsByEpisodeId(int id);
     }
 }

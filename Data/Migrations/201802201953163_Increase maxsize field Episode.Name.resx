@@ -117,19 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ChangesURI" xml:space="preserve">
-    <value>tv/{0}/changes?api_key={1}</value>
+  <data name="Target" xml:space="preserve">
+    <value>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</value>
   </data>
-  <data name="EpisodesURI" xml:space="preserve">
-    <value>tv/{0}/season/{1}?api_key={2}&amp;language=en-US</value>
-  </data>
-  <data name="ImageURI" xml:space="preserve">
-    <value>{0}{1}{2}</value>
-  </data>
-  <data name="SearchURI" xml:space="preserve">
-    <value>search/tv?api_key={0}&amp;language=en-US&amp;query={1}&amp;page={2}</value>
-  </data>
-  <data name="SeasonsURI" xml:space="preserve">
-    <value>tv/{0}?api_key={1}&amp;language=en-US</value>
+  <data name="DefaultSchema" xml:space="preserve">
+    <value>dbo</value>
   </data>
 </root>

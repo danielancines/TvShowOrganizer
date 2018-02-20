@@ -28,7 +28,11 @@ namespace Labs.WPF.TvShowOrganizer.Data.Repositories
 
         public int Add(Episode episode)
         {
-            throw new NotImplementedException();
+            if (this.Exists(episode.ID))
+                return 0;
+
+            this._context.Episodes.Add(episode);
+            return this._context.SaveChanges();
         }
 
         public int AddRange(IEnumerable<Episode> episodes)
@@ -48,7 +52,21 @@ namespace Labs.WPF.TvShowOrganizer.Data.Repositories
                 .Episodes
                 .Include("TvShow")
                 .Where(e => !e.Downloaded && e.FirstAired <= DateTime.Now).ToList()
-                .Select(e=>new EpisodeDTO(e));
+                .Select(e => new EpisodeDTO(e));
+        }
+
+        public EpisodeDTO GetLastEpisodeBySeasonAndFirstAired(Guid serieID)
+        {
+            var episode = this._context
+                .Episodes
+                .Where(e=>e.TvShowId.Equals(serieID))
+                .OrderByDescending(e => e.Season).ThenByDescending(e => e.Number)
+                .FirstOrDefault(e => e.FirstAired <= DateTime.Now);
+
+            if (episode != null)
+                return new EpisodeDTO(episode);
+
+            return null;
         }
 
         public Episode GetById(Guid id)
@@ -86,6 +104,16 @@ namespace Labs.WPF.TvShowOrganizer.Data.Repositories
 
             episode.TorrentURI = uri;
             return this._context.SaveChanges() > 1;
+        }
+
+        public bool Exists(Guid id)
+        {
+            return this._context.Episodes.Any(e => e.ID.Equals(id));
+        }
+
+        public bool ExistsByEpisodeId(int id)
+        {
+            return this._context.Episodes.Any(e => e.EpisodeId.Equals(id));
         }
 
         #endregion

@@ -69,7 +69,20 @@ namespace Labs.WPF.TorrentDownload.ViewModels
         #region Properties
 
         public ObservableCollection<EpisodeDTO> Episodes { get; private set; }
-        public string SearchTerm { get; set; }
+
+        private string _searchTerm;
+        public string SearchTerm
+        {
+            get { return this._searchTerm; }
+            set
+            {
+                if (this._searchTerm == value)
+                    return;
+
+                this._searchTerm = value;
+                this.RaisePropertyChanged();
+            }
+        }
 
         #endregion
 
@@ -96,6 +109,7 @@ namespace Labs.WPF.TorrentDownload.ViewModels
             ViewsHandler.Instance.RegisterView(searchWindow);
             searchWindow.ShowDialog();
             this.LoadEpisodes();
+            this.SearchTerm = string.Empty;
         }
 
         private void LoadEpisodes()
@@ -103,9 +117,10 @@ namespace Labs.WPF.TorrentDownload.ViewModels
             this.Episodes.Clear();
             Task.Factory.StartNew(() =>
             {
-                this.UpdateShows();
-                this.BusyContent = "Loading Episodes...";
+                this.BusyContent = "Looking for updates...";
                 this.IsBusy = true;
+                this._tvShowDatabaseService.UpdateShows().Wait();
+                this.BusyContent = "Loading episodes...";
 
                 return this._episodeRepository.NotDownloadedEpisodes();
             }).ContinueWith(load =>
@@ -120,16 +135,9 @@ namespace Labs.WPF.TorrentDownload.ViewModels
             }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
-        private async void UpdateShows()
+        private async Task<bool> UpdateShows()
         {
-            this.BusyContent = "Looking for updates...";
-            this.IsBusy = true;
-
-            var server = this._serverRepository.GetServer();
-
-            //var series = this._tvShowRepository.SeriesByLastUpdate(lastUpdated);
-            //if (!series.Any())
-            //    return;
+            return await this._tvShowDatabaseService.UpdateShows();
         }
 
         private async void Execute_StartDownloadCommand(EpisodeDTO episode)

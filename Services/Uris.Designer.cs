@@ -61,6 +61,15 @@ namespace Labs.WPF.TvShowOrganizer.Services {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to tv/{0}/changes?api_key={1}.
+        /// </summary>
+        internal static string ChangesURI {
+            get {
+                return ResourceManager.GetString("ChangesURI", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to tv/{0}/season/{1}?api_key={2}&amp;language=en-US.
         /// </summary>
         internal static string EpisodesURI {
