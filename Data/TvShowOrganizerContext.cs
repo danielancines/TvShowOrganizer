@@ -8,7 +8,6 @@ namespace Labs.WPF.TvShowOrganizer.Data
         public TvShowOrganizerContext()
             : base(nameOrConnectionString: "TvShowOrganizerContext")
         {
-
         }
 
         public DbSet<TvShow> TvShows { get; set; }
