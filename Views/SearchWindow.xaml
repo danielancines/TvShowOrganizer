@@ -39,15 +39,15 @@
                                 </i:Interaction.Triggers>
                                 <Grid Margin="5">
                                     <Grid.RowDefinitions>
-                                        <RowDefinition/>
-                                        <RowDefinition/>
+                                        <RowDefinition Height="Auto"/>
                                         <RowDefinition/>
                                     </Grid.RowDefinitions>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition/>
+                                        <ColumnDefinition Width=".3*"/>
                                     </Grid.ColumnDefinitions>
-                                    <Image Source="{Binding Banner}"/>
-                                    <TextBlock Text="{Binding Name}" Grid.Row="1" FontSize="20" FontWeight="Bold"/>
+                                    <Image Source="{Binding Banner}" Grid.Column="1" Grid.RowSpan="2"/>
+                                    <TextBlock Text="{Binding Name}" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center"/>
                                     <TextBlock Text="{Binding Overview}" Grid.Row="2" FontSize="14" TextWrapping="Wrap" Margin="0,5,0,0"/>
                                 </Grid>
                             </Border>

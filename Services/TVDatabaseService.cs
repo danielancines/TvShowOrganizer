@@ -7,16 +7,19 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Labs.WPF.TvShowOrganizer.Data.Repositories.Interface;
 
 namespace Labs.WPF.TvShowOrganizer.Services
 {
-    public class TVDatabaseService : ITvShowDatabase
+    public class TVDatabaseService
     {
         #region Constructor
 
-        public TVDatabaseService(XValueConverter xValueConverter)
+        public TVDatabaseService(XValueConverter xValueConverter, IServerRepository serverRepository, ITvShowRepository tvShowRepository)
         {
             this._xValueConverter = xValueConverter;
+            this._serverRepository = serverRepository;
+            this._tvShowRepository = tvShowRepository;
         }
 
         #endregion
@@ -24,6 +27,8 @@ namespace Labs.WPF.TvShowOrganizer.Services
         #region Fields
 
         private XValueConverter _xValueConverter;
+        private IServerRepository _serverRepository;
+        private ITvShowRepository _tvShowRepository;
 
         #endregion
 
@@ -95,6 +100,54 @@ namespace Labs.WPF.TvShowOrganizer.Services
 
             var itemElement = XDocument.Parse(data).Descendants("Items").FirstOrDefault();
             return this._xValueConverter.GetValue<double>(itemElement);
+        }
+
+        public async Task<bool> UpdateShows()
+        {
+            //WebClient client = new WebClient();
+            //var lastUpdateTime = await this.GetServerUpdate();
+            //var server = this._serverRepository.GetServer();
+
+            //if (server.LastUpdate >= lastUpdateTime)
+            //    return false;
+
+            //var series = this._tvShowRepository.SeriesByLastUpdate(server.LastUpdate);
+            //foreach (var serie in series)
+            //{
+
+            //}
+
+
+            //var server = this._serverRepository.GetServer();
+            //var time = server.LastUpdate;
+            //var result = false;
+
+            //if (lastUpdateTime <= server.LastUpdate)
+            //    return result;
+
+            //do
+            //{
+            //    server.LastUpdate = time;
+
+            //    var data = await client.DownloadStringTaskAsync(string.Format("http://thetvdb.com/api/Updates.php?type=all&time={0}", server.LastUpdate));
+            //    if (data == null)
+            //        break;
+
+            //    var timeElement = XDocument.Parse(data).Descendants("Time").FirstOrDefault();
+            //    if (timeElement == null)
+            //        break;
+
+            //    time = Convert.ToDouble(timeElement.Value);
+            //    foreach (var element in XDocument.Parse(data).Descendants("Series"))
+            //    {
+
+            //    }
+
+            //} while (server.LastUpdate != lastUpdateTime);
+
+            //this._serverRepository.Update(server);
+
+            return false;
         }
 
         #endregion

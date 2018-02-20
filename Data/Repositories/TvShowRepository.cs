@@ -44,7 +44,12 @@ namespace Labs.WPF.TvShowOrganizer.Data.Repositories
 
         public IEnumerable<TvShow> Series()
         {
-            throw new NotImplementedException();
+            return this._context.TvShows;
+        }
+
+        public IEnumerable<TvShow> SeriesByLastUpdate(double lastUpdate)
+        {
+            return this._context.TvShows.Where(t=>t.LastUpdated < lastUpdate);
         }
 
         public bool Update(TvShow tvShow)

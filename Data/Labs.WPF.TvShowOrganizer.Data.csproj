@@ -98,6 +98,18 @@
     <Compile Include="Migrations\201802192140419_Nullable FirstAired field at Episode table.Designer.cs">
       <DependentUpon>201802192140419_Nullable FirstAired field at Episode table.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201802201327255_ApiKey field.cs" />
+    <Compile Include="Migrations\201802201327255_ApiKey field.Designer.cs">
+      <DependentUpon>201802201327255_ApiKey field.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201802201345591_ImageUri field.cs" />
+    <Compile Include="Migrations\201802201345591_ImageUri field.Designer.cs">
+      <DependentUpon>201802201345591_ImageUri field.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201802201622000_Remove Fields.cs" />
+    <Compile Include="Migrations\201802201622000_Remove Fields.Designer.cs">
+      <DependentUpon>201802201622000_Remove Fields.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="DTO\DTOBase\DTOObject.cs" />
     <Compile Include="Model\Episode.cs" />
@@ -149,6 +161,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201802192140419_Nullable FirstAired field at Episode table.resx">
       <DependentUpon>201802192140419_Nullable FirstAired field at Episode table.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201802201327255_ApiKey field.resx">
+      <DependentUpon>201802201327255_ApiKey field.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201802201345591_ImageUri field.resx">
+      <DependentUpon>201802201345591_ImageUri field.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201802201622000_Remove Fields.resx">
+      <DependentUpon>201802201622000_Remove Fields.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

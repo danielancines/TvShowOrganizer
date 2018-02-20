@@ -9,6 +9,7 @@ namespace Labs.WPF.TvShowOrganizer.Data.Repositories.Interface
         TvShow GetById(Guid id);
         TvShow GetBySerieId(int serieId);
         IEnumerable<TvShow> Series();
+        IEnumerable<TvShow> SeriesByLastUpdate(double lastUpdate);
         int Add(TvShow tvShow);
         bool Update(TvShow tvShow);
         bool Remove(TvShow tvShow);

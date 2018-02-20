@@ -15,8 +15,8 @@ namespace Labs.WPF.TvShowOrganizer.Data.Model
         public string BaseUri { get; set; }
 
         [Required, MaxLength(50)]
-        public string UpdateUri { get; set; }
+        public string ApiKey { get; set; }
 
-        public double LastUpdate { get; set; }
+        public string ImageUri { get; set; }
     }
 }

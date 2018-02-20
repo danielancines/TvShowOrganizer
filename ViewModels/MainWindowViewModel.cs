@@ -12,13 +12,12 @@ using Prism.Commands;
 using Prism.Events;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using Unity;
 using Unity.Resolution;
-using System;
-using System.Diagnostics;
-using System.Windows;
 
 namespace Labs.WPF.TorrentDownload.ViewModels
 {
@@ -26,12 +25,16 @@ namespace Labs.WPF.TorrentDownload.ViewModels
     {
         #region Constructor
 
-        public MainWindowViewModel(IUnityContainer container, IEpisodeRepository episodeRepository, ITorrentService torrentService, IEventAggregator eventAggregator)
+        public MainWindowViewModel(IUnityContainer container, IEpisodeRepository episodeRepository, ITorrentService torrentService, IEventAggregator eventAggregator, IServerRepository serverRepository, ITvShowDatabase tvShowDatabaseService, ITvShowRepository tvShowRepository)
         {
             this._container = container;
             this._episodeRepository = episodeRepository;
             this._torrentService = torrentService;
             this._eventAggregator = eventAggregator;
+            this._serverRepository = serverRepository;
+            this._tvShowDatabaseService = tvShowDatabaseService;
+            this._tvShowRepository = tvShowRepository;
+
             this.SearchCommand = new DelegateCommand<object>(this.Execute_Search);
             this.StartDownloadCommand = new DelegateCommand<EpisodeDTO>(this.Execute_StartDownloadCommand);
             this.LoadedCommand = new DelegateCommand<Episode>(this.Execute_LoadedCommand);
@@ -54,8 +57,11 @@ namespace Labs.WPF.TorrentDownload.ViewModels
 
         private IUnityContainer _container;
         private IEpisodeRepository _episodeRepository;
+        private IServerRepository _serverRepository;
+        private ITvShowRepository _tvShowRepository;
         private ITorrentService _torrentService;
         private IEventAggregator _eventAggregator;
+        private ITvShowDatabase _tvShowDatabaseService;
         private SubscriptionToken _selectedTorrentToken;
 
         #endregion
@@ -83,6 +89,9 @@ namespace Labs.WPF.TorrentDownload.ViewModels
 
         private void Execute_Search(object obj)
         {
+            if (string.IsNullOrWhiteSpace(this.SearchTerm) && obj != null && obj is string)
+                this.SearchTerm = obj.ToString();
+
             var searchWindow = this._container.Resolve<SearchWindow>(new ParameterOverride("searchTerm", this.SearchTerm));
             ViewsHandler.Instance.RegisterView(searchWindow);
             searchWindow.ShowDialog();
@@ -94,6 +103,7 @@ namespace Labs.WPF.TorrentDownload.ViewModels
             this.Episodes.Clear();
             Task.Factory.StartNew(() =>
             {
+                this.UpdateShows();
                 this.BusyContent = "Loading Episodes...";
                 this.IsBusy = true;
 
@@ -108,6 +118,18 @@ namespace Labs.WPF.TorrentDownload.ViewModels
 
                 this.IsBusy = false;
             }, TaskScheduler.FromCurrentSynchronizationContext());
+        }
+
+        private async void UpdateShows()
+        {
+            this.BusyContent = "Looking for updates...";
+            this.IsBusy = true;
+
+            var server = this._serverRepository.GetServer();
+
+            //var series = this._tvShowRepository.SeriesByLastUpdate(lastUpdated);
+            //if (!series.Any())
+            //    return;
         }
 
         private async void Execute_StartDownloadCommand(EpisodeDTO episode)

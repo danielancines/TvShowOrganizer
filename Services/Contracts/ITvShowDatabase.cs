@@ -7,8 +7,8 @@ namespace Labs.WPF.TvShowOrganizer.Services.Contracts
 {
     public interface ITvShowDatabase
     {
-        Task<IEnumerable<TvShow>> Search(string term);
+        Task<IEnumerable<TvShow>> Search(string term, int page = 1);
         Task<IEnumerable<Episode>> GetEpisodes(int serieID, Guid tvShowId);
-        Task<double> GetServerUpdate();
+        Task<bool> UpdateShows();
     }
 }

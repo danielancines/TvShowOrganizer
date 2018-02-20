@@ -21,7 +21,7 @@ namespace Labs.WPF.TorrentDownload
             base.OnStartup(e);
 
             IUnityContainer container = new UnityContainer();
-            container.RegisterType<ITvShowDatabase, TVDatabaseService>();
+            container.RegisterType<ITvShowDatabase, TheMovieDbService>();
             container.RegisterType<DbContext, TvShowOrganizerContext>();
             container.RegisterType<ITvShowRepository, TvShowRepository>();
             container.RegisterType<IEpisodeRepository, EpisodeRepository>();
