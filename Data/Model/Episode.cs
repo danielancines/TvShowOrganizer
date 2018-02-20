@@ -29,12 +29,16 @@ namespace Labs.WPF.TvShowOrganizer.Data.Model
         [Required]
         public int Season { get; set; }
 
-        [MaxLength(500)]
+        [MaxLength(1000)]
         public string Overview { get; set; }
+
+        public DateTime? FirstAired { get; set; }
 
         public double LastUpdated { get; set; }
 
         public bool Downloaded { get; set; }
+
+        public string TorrentURI { get; set; }
 
         #endregion
     }

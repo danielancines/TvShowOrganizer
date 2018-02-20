@@ -10,6 +10,25 @@ namespace Labs.WPF.Core.Converters
             if (element == null)
                 return default(T);
 
+            if (typeof(T) == typeof(DateTime?))
+            {
+                try
+                {
+                    if (string.IsNullOrWhiteSpace(element.Value))
+                        return default(T);
+
+                    var dtResult = DateTime.Now;
+                    if (DateTime.TryParse(element.Value, out dtResult))
+                        return (T)Convert.ChangeType(dtResult, Nullable.GetUnderlyingType(typeof(T)));
+
+                    return default(T);
+                }
+                catch
+                {
+                    return default(T);
+                }
+            }
+
             switch (Type.GetTypeCode(typeof(T)))
             {
                 case TypeCode.Int32:
@@ -30,11 +49,20 @@ namespace Labs.WPF.Core.Converters
                     else
                         break;
                 case TypeCode.DateTime:
-                    var dtResult = default(DateTime);
-                    if (DateTime.TryParse(element.Value, out dtResult))
-                        return (T)Convert.ChangeType(dtResult, typeof(T));
-                    else
-                        break;
+                    var dtResult = DateTime.Now;
+                    DateTime.TryParse(element.Value, out dtResult);
+
+                    try
+                    {
+                        var a = (T)Convert.ChangeType(dtResult, typeof(T));
+                    }
+                    catch (Exception ex)
+                    {
+
+                        throw;
+                    }
+
+                    return (T)Convert.ChangeType(dtResult, typeof(T));
                 default:
                     return default(T);
             }

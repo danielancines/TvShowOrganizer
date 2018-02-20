@@ -15,5 +15,6 @@ namespace Labs.WPF.TvShowOrganizer.Data.Repositories.Interface
         int AddRange(IEnumerable<Episode> episodes);
         bool Update(EpisodeDTO episode);
         bool Remove(Episode episode);
+        bool UpdateTorrentURI(Guid id, string uri);
     }
 }

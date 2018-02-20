@@ -2,6 +2,7 @@
 using Labs.WPF.TvShowOrganizer.Data.Model;
 using Labs.WPF.TvShowOrganizer.Services.Contracts;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
@@ -77,11 +78,23 @@ namespace Labs.WPF.TvShowOrganizer.Services
                     LastUpdated = this._xValueConverter.GetValue<double>(episode.Element("lastupdated")),
                     Overview = this._xValueConverter.GetValue<string>(episode.Element("Overview")),
                     Season = this._xValueConverter.GetValue<int>(episode.Element("SeasonNumber")),
+                    FirstAired = this._xValueConverter.GetValue<DateTime?>(episode.Element("FirstAired")),
                     TvShowId = tvShowId
                 });
             }
 
             return episodes;
+        }
+
+        public async Task<double> GetServerUpdate()
+        {
+            WebClient client = new WebClient();
+            var data = await client.DownloadStringTaskAsync("http://thetvdb.com/api/Updates.php?type=none");
+            if (data == null)
+                return 0;
+
+            var itemElement = XDocument.Parse(data).Descendants("Items").FirstOrDefault();
+            return this._xValueConverter.GetValue<double>(itemElement);
         }
 
         #endregion

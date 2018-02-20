@@ -9,5 +9,6 @@ namespace Labs.WPF.TvShowOrganizer.Services.Contracts
     {
         Task<IEnumerable<TvShow>> Search(string term);
         Task<IEnumerable<Episode>> GetEpisodes(int serieID, Guid tvShowId);
+        Task<double> GetServerUpdate();
     }
 }

@@ -24,6 +24,8 @@ namespace Labs.WPF.TvShowOrganizer.Data.DTO
             this.Overview = episode.Overview;
             this.LastUpdated = episode.LastUpdated;
             this._downloaded = episode.Downloaded;
+            this.TorrentURI = episode.TorrentURI;
+            this.FirstAired = episode.FirstAired;
         }
 
         public Guid ID { get; set; }
@@ -35,6 +37,8 @@ namespace Labs.WPF.TvShowOrganizer.Data.DTO
         public int Season { get; set; }
         public string Overview { get; set; }
         public double LastUpdated { get; set; }
+        public DateTime? FirstAired { get; set; }
+
         public INotify<EpisodeDTO> Notifier { get; set; }
 
         private bool _downloaded;
@@ -55,6 +59,26 @@ namespace Labs.WPF.TvShowOrganizer.Data.DTO
             }
         }
 
+        private string _torrentURI;
+        public string TorrentURI
+        {
+            get { return this._torrentURI; }
+            set
+            {
+                if (this._torrentURI == value)
+                    return;
+
+                this._torrentURI = value;
+                this.RaisePropertyChanged();
+                this.RaisePropertyChanged("ButtonContent");
+            }
+        }
+
+        public string ButtonContent
+        {
+            get { return string.IsNullOrWhiteSpace(this.TorrentURI) ? "Get torrent link" : "Download"; }
+        }
+        
         public void SetDownloadedPropertyNotNotify(bool downloaded)
         {
             this._downloaded = downloaded;

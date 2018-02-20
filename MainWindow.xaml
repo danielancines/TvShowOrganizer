@@ -35,11 +35,12 @@
                     <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="Auto"/>
                     <DataGridTextColumn Header="Season" Binding="{Binding Season}"/>
                     <DataGridTextColumn Header="Number" Binding="{Binding Number}"/>
+                    <DataGridTextColumn Header="Aired" Binding="{Binding FirstAired, StringFormat=dd/MM/yyyy}"/>
                     <DataGridCheckBoxColumn Header="Downloaded" Binding="{Binding Downloaded, UpdateSourceTrigger=PropertyChanged}"/>
                     <DataGridTemplateColumn>
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Content="Start Download" Command="{Binding DataContext.StartDownloadCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" CommandParameter="{Binding}"/>
+                                <Button Content="{Binding ButtonContent}" Command="{Binding DataContext.StartDownloadCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" CommandParameter="{Binding}"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

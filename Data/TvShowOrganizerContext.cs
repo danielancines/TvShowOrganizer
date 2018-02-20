@@ -14,5 +14,7 @@ namespace Labs.WPF.TvShowOrganizer.Data
         public DbSet<TvShow> TvShows { get; set; }
 
         public DbSet<Episode> Episodes { get; set; }
+
+        public DbSet<Server> Servers { get; set; }
     }
 }

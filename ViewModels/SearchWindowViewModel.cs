@@ -37,6 +37,7 @@ namespace Labs.WPF.TorrentDownload.ViewModels
         private string _searchTerm;
         private ITvShowRepository _tvShowRepository;
         private IEpisodeRepository _episodeRepository;
+        
 
         #endregion
 
@@ -67,6 +68,7 @@ namespace Labs.WPF.TorrentDownload.ViewModels
 
             this.IsBusy = true;
             this.BusyContent = string.Format("Saving {0}", tvShow.Name);
+            tvShow.LastUpdated = await this._tvDatabaseService.GetServerUpdate();
 
             this._tvShowRepository.Add(tvShow);
             this.BusyContent = string.Format("Loading episodes...", tvShow.Name);
@@ -96,7 +98,7 @@ namespace Labs.WPF.TorrentDownload.ViewModels
             }
             catch (WebException webException)
             {
-                
+
             }
             finally
             {

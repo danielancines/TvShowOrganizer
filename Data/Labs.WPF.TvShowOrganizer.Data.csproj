@@ -36,6 +36,12 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="Prism, Version=6.3.0.0, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
+      <HintPath>..\packages\Prism.Core.6.3.0\lib\net45\Prism.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -68,15 +74,42 @@
     <Compile Include="Migrations\201802182249151_Update error on property name.Designer.cs">
       <DependentUpon>201802182249151_Update error on property name.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201802191055551_New Field at episode table.cs" />
+    <Compile Include="Migrations\201802191055551_New Field at episode table.Designer.cs">
+      <DependentUpon>201802191055551_New Field at episode table.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201802191455043_Server Table.cs" />
+    <Compile Include="Migrations\201802191455043_Server Table.Designer.cs">
+      <DependentUpon>201802191455043_Server Table.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201802191501387_UpdateUri at Server table.cs" />
+    <Compile Include="Migrations\201802191501387_UpdateUri at Server table.Designer.cs">
+      <DependentUpon>201802191501387_UpdateUri at Server table.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201802192023375_Update Overview field.cs" />
+    <Compile Include="Migrations\201802192023375_Update Overview field.Designer.cs">
+      <DependentUpon>201802192023375_Update Overview field.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201802192034216_FirstAired field.cs" />
+    <Compile Include="Migrations\201802192034216_FirstAired field.Designer.cs">
+      <DependentUpon>201802192034216_FirstAired field.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201802192140419_Nullable FirstAired field at Episode table.cs" />
+    <Compile Include="Migrations\201802192140419_Nullable FirstAired field at Episode table.Designer.cs">
+      <DependentUpon>201802192140419_Nullable FirstAired field at Episode table.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="DTO\DTOBase\DTOObject.cs" />
     <Compile Include="Model\Episode.cs" />
+    <Compile Include="Model\Server.cs" />
     <Compile Include="Model\TvShow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\EpisodeRepository.cs" />
     <Compile Include="Repositories\Interface\IEpisodeRepository.cs" />
+    <Compile Include="Repositories\Interface\IServerRepository.cs" />
     <Compile Include="Repositories\TvShowRepository.cs" />
     <Compile Include="Repositories\Interface\ITvShowRepository.cs" />
+    <Compile Include="Repositories\TvShowServerRepository.cs" />
     <Compile Include="TvShowOrganizerContext.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -98,6 +131,24 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201802182249151_Update error on property name.resx">
       <DependentUpon>201802182249151_Update error on property name.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201802191055551_New Field at episode table.resx">
+      <DependentUpon>201802191055551_New Field at episode table.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201802191455043_Server Table.resx">
+      <DependentUpon>201802191455043_Server Table.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201802191501387_UpdateUri at Server table.resx">
+      <DependentUpon>201802191501387_UpdateUri at Server table.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201802192023375_Update Overview field.resx">
+      <DependentUpon>201802192023375_Update Overview field.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201802192034216_FirstAired field.resx">
+      <DependentUpon>201802192034216_FirstAired field.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201802192140419_Nullable FirstAired field at Episode table.resx">
+      <DependentUpon>201802192140419_Nullable FirstAired field at Episode table.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

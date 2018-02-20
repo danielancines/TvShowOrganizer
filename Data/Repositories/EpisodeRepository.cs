@@ -1,9 +1,9 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
+﻿using Labs.WPF.TvShowOrganizer.Data.DTO;
 using Labs.WPF.TvShowOrganizer.Data.Model;
 using Labs.WPF.TvShowOrganizer.Data.Repositories.Interface;
-using Labs.WPF.TvShowOrganizer.Data.DTO;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Labs.WPF.TvShowOrganizer.Data.Repositories
 {
@@ -47,7 +47,7 @@ namespace Labs.WPF.TvShowOrganizer.Data.Repositories
             return this._context
                 .Episodes
                 .Include("TvShow")
-                .Where(e => !e.Downloaded).ToList()
+                .Where(e => !e.Downloaded && e.FirstAired <= DateTime.Now).ToList()
                 .Select(e=>new EpisodeDTO(e));
         }
 
@@ -76,6 +76,16 @@ namespace Labs.WPF.TvShowOrganizer.Data.Repositories
 
             this._context.SaveChanges();
             return true;
+        }
+
+        public bool UpdateTorrentURI(Guid id, string uri)
+        {
+            var episode = this._context.Episodes.FirstOrDefault(e => e.ID.Equals(id));
+            if (episode == null)
+                return false;
+
+            episode.TorrentURI = uri;
+            return this._context.SaveChanges() > 1;
         }
 
         #endregion
