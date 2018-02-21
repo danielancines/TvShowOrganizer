@@ -10,6 +10,7 @@ using Labs.WPF.TvShowOrganizer.Events;
 using Labs.WPF.TvShowOrganizer.Services.Contracts;
 using Prism.Commands;
 using Prism.Events;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -25,7 +26,7 @@ namespace Labs.WPF.TorrentDownload.ViewModels
     {
         #region Constructor
 
-        public MainWindowViewModel(IUnityContainer container, IEpisodeRepository episodeRepository, ITorrentService torrentService, IEventAggregator eventAggregator, IServerRepository serverRepository, ITvShowDatabase tvShowDatabaseService, ITvShowRepository tvShowRepository)
+        public MainWindowViewModel(IUnityContainer container, IEpisodeRepository episodeRepository, ITorrentService torrentService, IEventAggregator eventAggregator, IServerRepository serverRepository, ITvShowDatabase tvShowDatabaseService, ITvShowRepository tvShowRepository, IMessageService messageService)
         {
             this._container = container;
             this._episodeRepository = episodeRepository;
@@ -34,12 +35,21 @@ namespace Labs.WPF.TorrentDownload.ViewModels
             this._serverRepository = serverRepository;
             this._tvShowDatabaseService = tvShowDatabaseService;
             this._tvShowRepository = tvShowRepository;
+            this._messageService = messageService;
 
             this.SearchCommand = new DelegateCommand<object>(this.Execute_Search);
             this.StartDownloadCommand = new DelegateCommand<EpisodeDTO>(this.Execute_StartDownloadCommand);
             this.LoadedCommand = new DelegateCommand<Episode>(this.Execute_LoadedCommand);
             this.ExitCommand = new DelegateCommand<object>(this.Execute_ExitCommand);
+            this.UpdateCommand = new DelegateCommand<object>(this.Execute_UpdateCommand);
+            this.SearchTorrentLinksCommand = new DelegateCommand<object>(this.Execute_SearchTorrentLinksCommand);
+            this.MarkEpisodeAsDownloadedCommand = new DelegateCommand<object>(this.Execute_MarkEpisodeAsDownloadedCommand);
             this.Episodes = new ObservableCollection<EpisodeDTO>();
+        }
+
+        private void Execute_MarkEpisodeAsDownloadedCommand(object obj)
+        {
+            this.MarkEpisodeAsDownloaded(this.SelectedEpisode);
         }
 
         #endregion
@@ -50,6 +60,9 @@ namespace Labs.WPF.TorrentDownload.ViewModels
         public DelegateCommand<EpisodeDTO> StartDownloadCommand { get; private set; }
         public DelegateCommand<Episode> LoadedCommand { get; private set; }
         public DelegateCommand<object> ExitCommand { get; private set; }
+        public DelegateCommand<object> UpdateCommand { get; private set; }
+        public DelegateCommand<object> SearchTorrentLinksCommand { get; private set; }
+        public DelegateCommand<object> MarkEpisodeAsDownloadedCommand { get; private set; }
 
         #endregion
 
@@ -62,6 +75,7 @@ namespace Labs.WPF.TorrentDownload.ViewModels
         private ITorrentService _torrentService;
         private IEventAggregator _eventAggregator;
         private ITvShowDatabase _tvShowDatabaseService;
+        private IMessageService _messageService;
         private SubscriptionToken _selectedTorrentToken;
 
         #endregion
@@ -84,9 +98,36 @@ namespace Labs.WPF.TorrentDownload.ViewModels
             }
         }
 
+        private EpisodeDTO _selectedEpisode;
+        public EpisodeDTO SelectedEpisode
+        {
+            get { return this._selectedEpisode; }
+            set
+            {
+                if (this._selectedEpisode == value)
+                    return;
+
+                this._selectedEpisode = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
         #endregion
 
         #region Private Methods
+
+        private void Execute_SearchTorrentLinksCommand(object obj)
+        {
+            if (this.SelectedEpisode == null)
+                return;
+
+            this.LoadTorrentData(this.SelectedEpisode);
+        }
+
+        private void Execute_UpdateCommand(object obj)
+        {
+            this.LoadEpisodes();
+        }
 
         private void Execute_ExitCommand(object obj)
         {
@@ -97,7 +138,7 @@ namespace Labs.WPF.TorrentDownload.ViewModels
 
         private void Execute_LoadedCommand(Episode obj)
         {
-            this.LoadEpisodes();
+            //this.LoadEpisodes();
         }
 
         private void Execute_Search(object obj)
@@ -190,29 +231,54 @@ namespace Labs.WPF.TorrentDownload.ViewModels
 
         public void Notify(EpisodeDTO episode)
         {
+            //this.MarkEpisodeAsDownloaded(episode);
+        }
+
+        private void MarkEpisodeAsDownloaded(EpisodeDTO episode)
+        {
+            var messageResult = this._messageService.Show("Set downloaded to previous episodes?", "Question", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+            if (messageResult == MessageBoxResult.Cancel)
+                return;
+
+            if (messageResult == MessageBoxResult.No)
+            {
+                this._episodeRepository.Update(episode);
+                this.Episodes.Remove(episode);
+                return;
+            }
+
             Task.Factory.StartNew(() =>
             {
                 this.BusyContent = "Saving updates...";
                 this.IsBusy = true;
 
-                var updatedEpisodes = this.Episodes.Where(e => e.Season <= episode.Season);
+                var updatedEpisodes = new List<EpisodeDTO>();
 
-                foreach (var item in updatedEpisodes)
+                foreach (var item in this.Episodes.Where(e => e.Season <= episode.Season))
                 {
                     if (item.Season == episode.Season && item.Number <= episode.Number)
+                    {
                         item.SetDownloadedPropertyNotNotify(true);
+                        updatedEpisodes.Add(item);
+                    }
                     else if (item.Season < episode.Season)
+                    {
                         item.SetDownloadedPropertyNotNotify(true);
+                        updatedEpisodes.Add(item);
+                    }
                 }
 
                 return updatedEpisodes;
             }).ContinueWith(episodes =>
             {
                 foreach (var item in episodes.Result)
-                    this._episodeRepository.Update(item);
+                {
+                    if (this._episodeRepository.Update(item))
+                        this.Episodes.Remove(item);
+                }
 
                 this.IsBusy = false;
-                this.LoadEpisodes();
+                //this.LoadEpisodes();
             }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 

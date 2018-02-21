@@ -2,10 +2,9 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:behaviors="clr-namespace:Labs.WPF.Core.Behaviors;assembly=Labs.WPF.Core"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         mc:Ignorable="d"
         Height="570" Width="1000" WindowStartupLocation="CenterScreen">
     <i:Interaction.Triggers>
@@ -27,28 +26,59 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <TextBox Text="{Binding SearchTerm}" Margin="5" Grid.ColumnSpan="3">
+            <Ribbon Grid.ColumnSpan="5">
+                <Ribbon.ApplicationMenu>
+                    <RibbonApplicationMenu>
+                        <RibbonApplicationMenuItem Command="{Binding ExitCommand}" Header="Sair"/>
+                    </RibbonApplicationMenu>
+                </Ribbon.ApplicationMenu>
+                <RibbonTab Header="Tv Shows">
+                    <RibbonGroup Header="Shows Options">
+                        <RibbonButton Command="{Binding UpdateCommand}" 
+                                      LargeImageSource="/images/refreshicon128x128.png"
+                                      Label="Update"
+                                      ToolTip="Update Episodes and Series"
+                                      ToolTipDescription="Start a full update on episodes and series"/>
+                        <RibbonButton Command="{Binding SearchTorrentLinksCommand}" IsEnabled="{Binding SelectedEpisode, FallbackValue=false, Converter={StaticResource NullToBooleanConverter}}" 
+                                      LargeImageSource="/images/torrenticon128x128.png"
+                                      Label="Search Links"
+                                      ToolTip="Search for torrents links"
+                                      ToolTipDescription="Search for torrents links"/>
+                        <RibbonButton Command="{Binding MarkEpisodeAsDownloadedCommand}" IsEnabled="{Binding SelectedEpisode, FallbackValue=false, Converter={StaticResource NullToBooleanConverter}}"
+                                      LargeImageSource="/images/CheckIcon128x128.png"
+                                      Label="Set Download"
+                                      ToolTip="Mark episode as downloaded">
+                        </RibbonButton>
+                    </RibbonGroup>
+                </RibbonTab>
+            </Ribbon>
+            <!--<TextBox Text="{Binding SearchTerm}" Margin="5" Grid.ColumnSpan="3">
                 <i:Interaction.Behaviors>
                     <behaviors:KeyUpBehavior Key="Return" Command="{Binding SearchCommand}"/>
                 </i:Interaction.Behaviors>
             </TextBox>
             <Button Content="Search" Command="{Binding SearchCommand}" Grid.Column="3" Margin="5" Cursor="Hand"/>
-            <Button Content="Exit" Command="{Binding ExitCommand}" Grid.Column="4" Margin="5" Cursor="Hand"/>
-            <DataGrid Grid.Row="2" Grid.ColumnSpan="5" Margin="5" ItemsSource="{Binding Episodes}" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False">
+            <Button Content="Exit" Command="{Binding ExitCommand}" Grid.Column="4" Margin="5" Cursor="Hand"/>-->
+            <DataGrid Grid.Row="2" Grid.ColumnSpan="5" Margin="5" 
+                      ItemsSource="{Binding Episodes}" 
+                      CanUserAddRows="False" 
+                      CanUserDeleteRows="False" 
+                      AutoGenerateColumns="False"
+                      SelectedItem="{Binding SelectedEpisode}">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Tv Show" Binding="{Binding TvShow.Name}" Width="Auto"/>
                     <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="Auto"/>
                     <DataGridTextColumn Header="Season" Binding="{Binding Season}"/>
                     <DataGridTextColumn Header="Number" Binding="{Binding Number}"/>
                     <DataGridTextColumn Header="Aired" Binding="{Binding FirstAired, StringFormat=dd/MM/yyyy}"/>
-                    <DataGridCheckBoxColumn Header="Downloaded" Binding="{Binding Downloaded, UpdateSourceTrigger=PropertyChanged}"/>
-                    <DataGridTemplateColumn>
+                    <!--<DataGridCheckBoxColumn Header="Downloaded" Binding="{Binding Downloaded, UpdateSourceTrigger=PropertyChanged}"/>-->
+                    <!--<DataGridTemplateColumn>
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Button Content="{Binding ButtonContent}" Command="{Binding DataContext.StartDownloadCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" CommandParameter="{Binding}"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
+                    </DataGridTemplateColumn>-->
                 </DataGrid.Columns>
             </DataGrid>
             <Border Grid.Row="1" Grid.ColumnSpan="5" Margin="5" CornerRadius="2" BorderThickness="1" BorderBrush="Gray">
