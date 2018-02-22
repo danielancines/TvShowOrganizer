@@ -38,11 +38,10 @@ namespace Labs.WPF.TorrentDownload.ViewModels
             this._messageService = messageService;
 
             this.SearchCommand = new DelegateCommand<object>(this.Execute_Search);
-            this.StartDownloadCommand = new DelegateCommand<EpisodeDTO>(this.Execute_StartDownloadCommand);
+            this.StartDownloadCommand = new DelegateCommand<object>(this.Execute_StartDownloadCommand);
             this.LoadedCommand = new DelegateCommand<Episode>(this.Execute_LoadedCommand);
             this.ExitCommand = new DelegateCommand<object>(this.Execute_ExitCommand);
             this.UpdateCommand = new DelegateCommand<object>(this.Execute_UpdateCommand);
-            this.SearchTorrentLinksCommand = new DelegateCommand<object>(this.Execute_SearchTorrentLinksCommand);
             this.MarkEpisodeAsDownloadedCommand = new DelegateCommand<object>(this.Execute_MarkEpisodeAsDownloadedCommand);
             this.Episodes = new ObservableCollection<EpisodeDTO>();
         }
@@ -57,11 +56,10 @@ namespace Labs.WPF.TorrentDownload.ViewModels
         #region Commands
 
         public DelegateCommand<object> SearchCommand { get; private set; }
-        public DelegateCommand<EpisodeDTO> StartDownloadCommand { get; private set; }
+        public DelegateCommand<object> StartDownloadCommand { get; private set; }
         public DelegateCommand<Episode> LoadedCommand { get; private set; }
         public DelegateCommand<object> ExitCommand { get; private set; }
         public DelegateCommand<object> UpdateCommand { get; private set; }
-        public DelegateCommand<object> SearchTorrentLinksCommand { get; private set; }
         public DelegateCommand<object> MarkEpisodeAsDownloadedCommand { get; private set; }
 
         #endregion
@@ -108,6 +106,38 @@ namespace Labs.WPF.TorrentDownload.ViewModels
                     return;
 
                 this._selectedEpisode = value;
+
+                if (this.SelectedEpisode != null)
+                    this.CanDownload = !string.IsNullOrWhiteSpace(this._selectedEpisode.TorrentURI);
+                this.RaisePropertyChanged();
+            }
+        }
+
+        private bool _showingDonwloaded = false;
+        public bool ShowingDonwloaded
+        {
+            get { return this._showingDonwloaded; }
+            set
+            {
+                if (this._showingDonwloaded == value)
+                    return;
+
+                this._showingDonwloaded = value;
+                this.LoadDownloadedEpisodes(value);
+                this.RaisePropertyChanged();
+            }
+        }
+
+        private bool _canDownload = false;
+        public bool CanDownload
+        {
+            get { return this._canDownload; }
+            set
+            {
+                if (this._canDownload == value)
+                    return;
+
+                this._canDownload = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -115,6 +145,30 @@ namespace Labs.WPF.TorrentDownload.ViewModels
         #endregion
 
         #region Private Methods
+
+        private void ChangeShowingDownloadedNotNotify(bool value)
+        {
+            this._showingDonwloaded = value;
+            this.RaisePropertyChanged("ShowingDonwloaded");
+        }
+
+        private void LoadDownloadedEpisodes(bool show)
+        {
+            this.Episodes.Clear();
+            this.IsBusy = true;
+            this.BusyContent = "Updating list...";
+            Task.Factory.StartNew(() =>
+            {
+                if (show)
+                    return this._episodeRepository.DownloadedEpisodes().OrderBy(e => e.Season).ThenBy(e => e.Number);
+                else
+                    return this._episodeRepository.NotDownloadedEpisodes().OrderBy(e => e.Season).ThenBy(e => e.Number);
+            }).ContinueWith(episodes =>
+            {
+                this.Episodes.AddRange(episodes.Result);
+                this.IsBusy = false;
+            }, TaskScheduler.FromCurrentSynchronizationContext());
+        }
 
         private void Execute_SearchTorrentLinksCommand(object obj)
         {
@@ -138,7 +192,7 @@ namespace Labs.WPF.TorrentDownload.ViewModels
 
         private void Execute_LoadedCommand(Episode obj)
         {
-            //this.LoadEpisodes();
+            this.LoadEpisodes();
         }
 
         private void Execute_Search(object obj)
@@ -155,6 +209,7 @@ namespace Labs.WPF.TorrentDownload.ViewModels
 
         private void LoadEpisodes()
         {
+            this.ChangeShowingDownloadedNotNotify(false);
             this.Episodes.Clear();
             Task.Factory.StartNew(() =>
             {
@@ -181,12 +236,15 @@ namespace Labs.WPF.TorrentDownload.ViewModels
             return await this._tvShowDatabaseService.UpdateShows();
         }
 
-        private async void Execute_StartDownloadCommand(EpisodeDTO episode)
+        private async void Execute_StartDownloadCommand(object obj)
         {
-            if (string.IsNullOrWhiteSpace(episode.TorrentURI))
-                this.LoadTorrentData(episode);
+            if (this.SelectedEpisode == null)
+                return;
+
+            if (string.IsNullOrWhiteSpace(this.SelectedEpisode.TorrentURI))
+                this.LoadTorrentData(this.SelectedEpisode);
             else
-                this.DownloadTorrent(episode);
+                this.DownloadTorrent(this.SelectedEpisode);
         }
 
         private void DownloadTorrent(EpisodeDTO episode)

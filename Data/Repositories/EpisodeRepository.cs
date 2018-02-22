@@ -59,7 +59,7 @@ namespace Labs.WPF.TvShowOrganizer.Data.Repositories
         {
             var episode = this._context
                 .Episodes
-                .Where(e=>e.TvShowId.Equals(serieID))
+                .Where(e => e.TvShowId.Equals(serieID))
                 .OrderByDescending(e => e.Season).ThenByDescending(e => e.Number)
                 .FirstOrDefault(e => e.FirstAired <= DateTime.Now);
 
@@ -114,6 +114,15 @@ namespace Labs.WPF.TvShowOrganizer.Data.Repositories
         public bool ExistsByEpisodeId(int id)
         {
             return this._context.Episodes.Any(e => e.EpisodeId.Equals(id));
+        }
+
+        public IEnumerable<EpisodeDTO> DownloadedEpisodes()
+        {
+            return this._context
+                .Episodes
+                .Include("TvShow")
+                .Where(e => e.Downloaded && e.FirstAired <= DateTime.Now).ToList()
+                .Select(e => new EpisodeDTO(e));
         }
 
         #endregion
