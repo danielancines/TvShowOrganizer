@@ -10,11 +10,11 @@ using Labs.WPF.TvShowOrganizer.Events;
 using Labs.WPF.TvShowOrganizer.Services.Contracts;
 using Prism.Commands;
 using Prism.Events;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using Unity;
@@ -26,7 +26,7 @@ namespace Labs.WPF.TorrentDownload.ViewModels
     {
         #region Constructor
 
-        public MainWindowViewModel(IUnityContainer container, IEpisodeRepository episodeRepository, ITorrentService torrentService, IEventAggregator eventAggregator, IServerRepository serverRepository, ITvShowDatabase tvShowDatabaseService, ITvShowRepository tvShowRepository, IMessageService messageService)
+        public MainWindowViewModel(IUnityContainer container, IEpisodeRepository episodeRepository, ITorrentService torrentService, IEventAggregator eventAggregator, IServerRepository serverRepository, ITvShowDatabase tvShowDatabaseService, ITvShowRepository tvShowRepository, IMessageService messageService, IInternetService internetService)
         {
             this._container = container;
             this._episodeRepository = episodeRepository;
@@ -36,6 +36,7 @@ namespace Labs.WPF.TorrentDownload.ViewModels
             this._tvShowDatabaseService = tvShowDatabaseService;
             this._tvShowRepository = tvShowRepository;
             this._messageService = messageService;
+            this._internetService = internetService;
 
             this.SearchCommand = new DelegateCommand<object>(this.Execute_Search);
             this.StartDownloadCommand = new DelegateCommand<object>(this.Execute_StartDownloadCommand);
@@ -74,6 +75,7 @@ namespace Labs.WPF.TorrentDownload.ViewModels
         private IEventAggregator _eventAggregator;
         private ITvShowDatabase _tvShowDatabaseService;
         private IMessageService _messageService;
+        private IInternetService _internetService;
         private SubscriptionToken _selectedTorrentToken;
 
         #endregion
@@ -193,6 +195,22 @@ namespace Labs.WPF.TorrentDownload.ViewModels
         private void Execute_LoadedCommand(Episode obj)
         {
             this.LoadEpisodes();
+            this.StartInternetConnectionVerifier();
+        }
+
+        private void StartInternetConnectionVerifier()
+        {
+            Task.Factory.StartNew(() =>
+            {
+                while (true)
+                {
+                    if (!this._internetService.HasInternetConnection())
+                        this.ErrorMessage = "No internet connection available!";
+
+                    Thread.Sleep(30000);
+                    this.ErrorMessage = string.Empty;
+                }
+            });
         }
 
         private void Execute_Search(object obj)

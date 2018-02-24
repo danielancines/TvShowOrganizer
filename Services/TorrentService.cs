@@ -10,10 +10,30 @@ namespace Labs.WPF.TvShowOrganizer.Services
 {
     public class TorrentService : ITorrentService
     {
+        #region Constructor
+
+        public TorrentService(IInternetService internetService)
+        {
+            _internetService = internetService;
+        }
+
+        #endregion
+
+        #region Fields
+
+        private IInternetService _internetService;
+
+        #endregion
+
         #region ITorrentService Members
 
         public Task<List<Tuple<string, string>>> GetLinks(string tvShowName, string season, string number)
         {
+            if (!this._internetService.HasInternetConnection())
+            {
+                return null;
+            }
+
             List<Tuple<string, string>> links = new List<Tuple<string, string>>();
             WebClient client = new WebClient();
             var task = client.DownloadStringTaskAsync(string.Format(@"https://thepiratebay.org/search/{0} s{1}e{2}", tvShowName, season, number));

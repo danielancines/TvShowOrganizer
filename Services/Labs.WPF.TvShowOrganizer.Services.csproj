@@ -47,9 +47,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Contracts\IInternetService.cs" />
     <Compile Include="Contracts\IMessageService.cs" />
     <Compile Include="Contracts\ITorrentService.cs" />
     <Compile Include="Contracts\ITvShowDatabase.cs" />
+    <Compile Include="InternetService.cs" />
     <Compile Include="MessageBoxService.cs" />
     <Compile Include="TheMovieDbService.cs" />
     <Compile Include="TorrentService.cs" />

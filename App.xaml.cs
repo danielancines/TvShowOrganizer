@@ -28,6 +28,7 @@ namespace Labs.WPF.TorrentDownload
             container.RegisterType<IServerRepository, TvShowServerRepository>();
             container.RegisterType<ITorrentService, TorrentService>();
             container.RegisterType<IMessageService, MessageBoxService>();
+            container.RegisterType<IInternetService, InternetService>();
             container.RegisterInstance<IEventAggregator>(new EventAggregator());
 
             var mainWindow = container.Resolve<MainWindow>();

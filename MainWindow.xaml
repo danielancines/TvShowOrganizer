@@ -7,6 +7,13 @@
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         mc:Ignorable="d"
         Height="570" Width="1000" WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <ControlTemplate x:Key="ToggleButtonControlTemplate1" TargetType="{x:Type ToggleButton}">
+            <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
+                <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+            </Border>
+        </ControlTemplate>
+    </Window.Resources>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
             <i:InvokeCommandAction Command="{Binding LoadedCommand}" />
@@ -57,7 +64,64 @@
                     </RibbonGroup>
                 </RibbonTab>
             </Ribbon>
-            <DataGrid Grid.Row="2" Grid.ColumnSpan="5" Margin="5" 
+            <ScrollViewer Grid.Row="2" Grid.ColumnSpan="5" Margin="5" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                <Border BorderThickness="1" BorderBrush="Black" CornerRadius="2">
+                    <ItemsControl ItemsSource="{Binding Episodes}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal" VerticalAlignment="Top"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ToggleButton Margin="5"
+                                              Height="80" Width="200"
+                                              Template="{StaticResource ToggleButtonControlTemplate1}">
+                                </ToggleButton>
+                                <!--<Border BorderBrush="Black" BorderThickness="1" CornerRadius="2" 
+                                        Margin="5"
+                                        Height="80" Width="200"
+                                        Cursor="Hand">
+                                    <Grid Margin="5">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition/> 
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Image Source="/images/CheckIcon128x128.png" 
+                                               Grid.Column="4" 
+                                               Width="15" Height="15"
+                                               Visibility="{Binding IsSelected, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                        <TextBlock Text="{Binding TvShow.Name}" 
+                                                   FontSize="17" FontWeight="Bold" 
+                                                   HorizontalAlignment="Center"
+                                                   Grid.ColumnSpan="4"/>
+                                        <TextBlock Text="{Binding Name}" Grid.Row="1"
+                                                   FontSize="15" HorizontalAlignment="Center" 
+                                                   TextWrapping="Wrap"
+                                                   Grid.ColumnSpan="4"/>
+                                        <TextBlock Text="Season: " Grid.Row="2" FontWeight="Bold"/>
+                                        <TextBlock Text="{Binding Season}" Grid.Row="2" Grid.Column="1"/>
+                                        <TextBlock Text="Episode: " Grid.Row="2" Grid.Column="2" FontWeight="Bold"/>
+                                        <TextBlock Text="{Binding Number}" Grid.Row="2" Grid.Column="3"/>
+                                    </Grid>
+                                </Border>-->
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Border>
+
+            </ScrollViewer>
+
+            <!--<DataGrid Grid.Row="2" Grid.ColumnSpan="5" Margin="5" 
                       ItemsSource="{Binding Episodes}" 
                       CanUserAddRows="False" 
                       CanUserDeleteRows="False" 
@@ -82,7 +146,7 @@
                     <DataGridTextColumn Header="Number" Binding="{Binding Number}"/>
                     <DataGridTextColumn Header="Aired" Binding="{Binding FirstAired, StringFormat=dd/MM/yyyy}"/>
                 </DataGrid.Columns>
-            </DataGrid>
+            </DataGrid>-->
             <Border Grid.Row="1" Grid.ColumnSpan="5" Margin="5" CornerRadius="2" BorderThickness="1" BorderBrush="Gray">
                 <TextBlock HorizontalAlignment="Center" Text="{Binding ErrorMessage}" Foreground="Red" FontWeight="Bold" FontSize="13"/>
             </Border>
