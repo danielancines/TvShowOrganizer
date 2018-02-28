@@ -4,6 +4,7 @@ using Labs.WPF.TvShowOrganizer.Data.Model;
 using Labs.WPF.TvShowOrganizer.Data.Repositories.Interface;
 using Labs.WPF.TvShowOrganizer.Services.Contracts;
 using Prism.Commands;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
@@ -15,15 +16,15 @@ namespace Labs.WPF.TorrentDownload.ViewModels
     {
         #region Constructor
 
-        public SearchWindowViewModel(ITvShowDatabase tvDatabaseService, string searchTerm, ITvShowRepository tvShowRepository, IEpisodeRepository episodeRepository)
+        public SearchWindowViewModel(ITvShowDatabase tvDatabaseService, string searchTerm, ITvShowRepository tvShowRepository, IEpisodeRepository episodeRepository, Guid windowId)
         {
             this._tvDatabaseService = tvDatabaseService;
             this._searchTerm = searchTerm;
             this._tvShowRepository = tvShowRepository;
             this._episodeRepository = episodeRepository;
+            this._windowId = windowId;
 
             this.OKCommand = new DelegateCommand<object>(this.Execute_OKCommand);
-            //this.CancelCommand = new DelegateCommand<object>(this.Execute_CancelCommand);
             this.LoadedCommand = new DelegateCommand<object>(this.Execute_LoadedCommand);
             this.SelectItemCommand = new DelegateCommand<TvShow>(this.Execute_SelectItemCommand);
             this.Shows = new ObservableCollection<TvShow>();
@@ -37,14 +38,13 @@ namespace Labs.WPF.TorrentDownload.ViewModels
         private string _searchTerm;
         private ITvShowRepository _tvShowRepository;
         private IEpisodeRepository _episodeRepository;
-        
+        private Guid _windowId;
 
         #endregion
 
         #region Commands
 
         public DelegateCommand<object> OKCommand { get; set; }
-        //public DelegateCommand<object> CancelCommand { get; set; }
         public DelegateCommand<object> LoadedCommand { get; set; }
         public DelegateCommand<TvShow> SelectItemCommand { get; set; }
 
@@ -68,7 +68,6 @@ namespace Labs.WPF.TorrentDownload.ViewModels
 
             this.IsBusy = true;
             this.BusyContent = string.Format("Saving {0}", tvShow.Name);
-            //tvShow.LastUpdated = await this._tvDatabaseService.GetServerUpdate();
 
             this._tvShowRepository.Add(tvShow);
             this.BusyContent = string.Format("Loading episodes...", tvShow.Name);
@@ -111,14 +110,9 @@ namespace Labs.WPF.TorrentDownload.ViewModels
             this.CloseWindow();
         }
 
-        //private void Execute_CancelCommand(object obj)
-        //{
-        //    this.CloseWindow();
-        //}
-
         private void CloseWindow()
         {
-            var view = ViewsHandler.Instance.GetView("SearchWindow") as Window;
+            var view = ViewsHandler.Instance.GetView(this._windowId) as Window;
             if (view == null)
                 return;
 

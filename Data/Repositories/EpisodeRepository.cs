@@ -92,8 +92,7 @@ namespace Labs.WPF.TvShowOrganizer.Data.Repositories
 
             episode.Downloaded = episodeDTO.Downloaded;
 
-            this._context.SaveChanges();
-            return true;
+            return this._context.SaveChanges() >= 1;
         }
 
         public bool UpdateTorrentURI(Guid id, string uri)

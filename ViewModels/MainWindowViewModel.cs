@@ -10,6 +10,7 @@ using Labs.WPF.TvShowOrganizer.Events;
 using Labs.WPF.TvShowOrganizer.Services.Contracts;
 using Prism.Commands;
 using Prism.Events;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -76,6 +77,7 @@ namespace Labs.WPF.TorrentDownload.ViewModels
         private ITvShowDatabase _tvShowDatabaseService;
         private IMessageService _messageService;
         private IInternetService _internetService;
+        private Guid _searchWindowId;
         private SubscriptionToken _selectedTorrentToken;
 
         #endregion
@@ -187,7 +189,7 @@ namespace Labs.WPF.TorrentDownload.ViewModels
 
         private void Execute_ExitCommand(object obj)
         {
-            var window = ViewsHandler.Instance.GetView("MainWindow") as Window;
+            var window = ViewsHandler.Instance.GetView(this._searchWindowId) as Window;
             if (window != null)
                 window.Close();
         }
@@ -218,8 +220,9 @@ namespace Labs.WPF.TorrentDownload.ViewModels
             if (string.IsNullOrWhiteSpace(this.SearchTerm) && obj != null && obj is string)
                 this.SearchTerm = obj.ToString();
 
-            var searchWindow = this._container.Resolve<SearchWindow>(new ParameterOverride("searchTerm", this.SearchTerm));
-            ViewsHandler.Instance.RegisterView(searchWindow);
+            this._searchWindowId = Guid.NewGuid();
+            var searchWindow = this._container.Resolve<SearchWindow>(new ParameterOverride("searchTerm", this.SearchTerm), new ParameterOverride("windowId", this._searchWindowId));
+            ViewsHandler.Instance.RegisterView(searchWindow, this._searchWindowId);
             searchWindow.ShowDialog();
             this.LoadEpisodes();
             this.SearchTerm = string.Empty;
@@ -282,8 +285,9 @@ namespace Labs.WPF.TorrentDownload.ViewModels
             foreach (var item in links)
                 torrents.Add(new Torrent(episode.ID, item.Item1, item.Item2));
 
-            var foundWindow = this._container.Resolve<FoundLinksView>(new ParameterOverride("torrents", torrents));
-            ViewsHandler.Instance.RegisterView(foundWindow);
+            var foundWindowId = Guid.NewGuid();
+            var foundWindow = this._container.Resolve<FoundLinksView>(new ParameterOverride("torrents", torrents), new ParameterOverride("windowId", foundWindowId));
+            ViewsHandler.Instance.RegisterView(foundWindow, foundWindowId);
             foundWindow.ShowDialog();
 
             this.IsBusy = false;
@@ -330,7 +334,7 @@ namespace Labs.WPF.TorrentDownload.ViewModels
 
                 var updatedEpisodes = new List<EpisodeDTO>();
 
-                foreach (var item in this.Episodes.Where(e => e.Season <= episode.Season))
+                foreach (var item in this.Episodes.Where(e => e.TvShowId == episode.TvShowId && e.Season <= episode.Season))
                 {
                     if (item.Season == episode.Season && item.Number <= episode.Number)
                     {

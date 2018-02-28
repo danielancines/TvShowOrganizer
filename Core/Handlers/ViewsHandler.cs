@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows;
-using Unity;
 
 namespace Labs.WPF.Core.Handlers
 {
@@ -10,7 +10,7 @@ namespace Labs.WPF.Core.Handlers
 
         private ViewsHandler()
         {
-            this.Views = new Dictionary<string, UIElement>();
+            this.Views = new Dictionary<Guid, UIElement>();
         }
 
         #endregion
@@ -33,31 +33,32 @@ namespace Labs.WPF.Core.Handlers
 
         #region Properties
 
-        private Dictionary<string, UIElement> Views { get; set; }
+        private Dictionary<Guid, UIElement> Views { get; set; }
 
         #endregion
 
         #region Methods
 
-        public void RegisterView(UIElement window)
+        public Guid RegisterView(UIElement window)
         {
-            var uiElementName = window.GetType().Name;
-            if (!this.Views.ContainsKey(uiElementName))
-                this.Views.Add(uiElementName, window);
+            return this.RegisterView(window, Guid.NewGuid());
         }
 
-        public UIElement GetView(string name)
+        public Guid RegisterView(UIElement window, Guid elementId)
         {
-            if (this.Views.ContainsKey(name))
-                return this.Views[name];
+            if (!this.Views.ContainsKey(elementId))
+                this.Views.Add(elementId, window);
+
+            return elementId;
+        }
+
+        public UIElement GetView(Guid elementId)
+        {
+            if (this.Views.ContainsKey(elementId))
+                return this.Views[elementId];
 
             return null;
         }
-
-        //public T CreateView<T>(Type type)
-        //{
-        //    return null;
-        //}
 
         #endregion
     }
