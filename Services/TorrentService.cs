@@ -34,6 +34,11 @@ namespace Labs.WPF.TvShowOrganizer.Services
                 return null;
             }
 
+            if (!this._internetService.HasInternetConnection())
+            {
+                return null;
+            }
+
             List<Tuple<string, string>> links = new List<Tuple<string, string>>();
             WebClient client = new WebClient();
             var task = client.DownloadStringTaskAsync(string.Format(@"https://thepiratebay.org/search/{0} s{1}e{2}", tvShowName, season, number));

@@ -1,11 +1,7 @@
 ﻿using Labs.WPF.TvShowOrganizer.Services.Contracts;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Labs.WPF.TvShowOrganizer.Services
 {
@@ -29,15 +25,13 @@ namespace Labs.WPF.TvShowOrganizer.Services
         {
             try
             {
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://www.google.com");
-                request.Timeout = 3000;
-                request.Credentials = CredentialCache.DefaultNetworkCredentials;
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                byte[] result;
+                using (var client = new WebClient())
+                {
+                    result = client.DownloadData("https://www.google.com");
+                }
 
-                if (response.StatusCode == HttpStatusCode.OK)
-                    return true;
-                else
-                    return false;
+                return true;
             }
             catch(Exception ex)
             {

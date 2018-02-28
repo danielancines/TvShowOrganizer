@@ -34,7 +34,6 @@ namespace Labs.WPF.TvShowOrganizer.Data.Model
         [MaxLength(200)]
         public string Banner { get; set; }
 
-        [MaxLength(500)]
         public string Overview { get; set; }
 
         [MaxLength(10)]
