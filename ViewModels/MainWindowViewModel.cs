@@ -254,7 +254,7 @@ namespace Labs.WPF.TorrentDownload.ViewModels
             return await this._tvShowDatabaseService.UpdateShows();
         }
 
-        private async void Execute_StartDownloadCommand(object obj)
+        private void Execute_StartDownloadCommand(object obj)
         {
             if (this.SelectedEpisode == null)
                 return;
