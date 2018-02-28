@@ -1,4 +1,5 @@
 ﻿using Labs.WPF.Core;
+using Labs.WPF.Core.Collections;
 using Labs.WPF.Core.Handlers;
 using Labs.WPF.Core.Notifiers;
 using Labs.WPF.TorrentDownload.Model;
@@ -45,7 +46,10 @@ namespace Labs.WPF.TorrentDownload.ViewModels
             this.ExitCommand = new DelegateCommand<object>(this.Execute_ExitCommand);
             this.UpdateCommand = new DelegateCommand<object>(this.Execute_UpdateCommand);
             this.MarkEpisodeAsDownloadedCommand = new DelegateCommand<object>(this.Execute_MarkEpisodeAsDownloadedCommand);
-            this.Episodes = new ObservableCollection<EpisodeDTO>();
+            this.Episodes = new SeachableObservableCollection<EpisodeDTO>();
+
+            this.SearchAndDownloadButtonLabel = "Search Torrents";
+            this.SearchAndDownloadButtonImage = "/images/TorrentIcon128x128.png";
         }
 
         private void Execute_MarkEpisodeAsDownloadedCommand(object obj)
@@ -84,7 +88,7 @@ namespace Labs.WPF.TorrentDownload.ViewModels
 
         #region Properties
 
-        public ObservableCollection<EpisodeDTO> Episodes { get; private set; }
+        public SeachableObservableCollection<EpisodeDTO> Episodes { get; private set; }
 
         private string _searchTerm;
         public string SearchTerm
@@ -96,6 +100,21 @@ namespace Labs.WPF.TorrentDownload.ViewModels
                     return;
 
                 this._searchTerm = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        private string _searchExistingItemsTerm;
+        public string SearchExistingItemsTerm
+        {
+            get { return this._searchExistingItemsTerm; }
+            set
+            {
+                if (this._searchExistingItemsTerm == value)
+                    return;
+
+                this._searchExistingItemsTerm = value;
+                this.FilterExistingItems(this._searchExistingItemsTerm);
                 this.RaisePropertyChanged();
             }
         }
@@ -113,7 +132,24 @@ namespace Labs.WPF.TorrentDownload.ViewModels
 
                 if (this.SelectedEpisode != null)
                     this.CanDownload = !string.IsNullOrWhiteSpace(this._selectedEpisode.TorrentURI);
+                this.ChangeSearchAndDownloadButtonInfo();
                 this.RaisePropertyChanged();
+            }
+        }
+
+        private void ChangeSearchAndDownloadButtonInfo()
+        {
+            if (this.SelectedEpisode == null)
+                return;
+
+            if (string.IsNullOrWhiteSpace(this.SelectedEpisode.TorrentURI))
+            {
+                this.SearchAndDownloadButtonLabel = "Search Torrents";
+                this.SearchAndDownloadButtonImage = "/images/TorrentIcon128x128.png";
+            }else
+            {
+                this.SearchAndDownloadButtonLabel = "Start Download";
+                this.SearchAndDownloadButtonImage = "/images/StartDownloadIcon128x128.png";
             }
         }
 
@@ -142,6 +178,34 @@ namespace Labs.WPF.TorrentDownload.ViewModels
                     return;
 
                 this._canDownload = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        private string _searchAndDownloadButtonLabel;
+        public string SearchAndDownloadButtonLabel
+        {
+            get { return this._searchAndDownloadButtonLabel; }
+            set
+            {
+                if (this._searchAndDownloadButtonLabel == value)
+                    return;
+
+                this._searchAndDownloadButtonLabel = value;
+                this.RaisePropertyChanged();
+            }
+        }
+
+        private string _searchAndDownloadButtonImage;
+        public string SearchAndDownloadButtonImage
+        {
+            get { return this._searchAndDownloadButtonImage; }
+            set
+            {
+                if (this._searchAndDownloadButtonImage == value)
+                    return;
+
+                this._searchAndDownloadButtonImage = value;
                 this.RaisePropertyChanged();
             }
         }
@@ -303,6 +367,11 @@ namespace Labs.WPF.TorrentDownload.ViewModels
 
             episode.TorrentURI = torrent.MagnetLink;
             this._episodeRepository.UpdateTorrentURI(episode.ID, episode.TorrentURI);
+        }
+
+        private void FilterExistingItems(string searchExistingItemsTerm)
+        {
+            this.Episodes.FilterItems(e => e.TvShow.Name.ToLower().Contains(searchExistingItemsTerm.ToLower()));
         }
 
         #endregion
