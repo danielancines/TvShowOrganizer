@@ -28,10 +28,7 @@ namespace Labs.WPF.TorrentDownload
             Assembly assembly = Assembly.GetExecutingAssembly();
             Version version = assembly.GetName().Version;
 
-            this.Title = string.Format("TV Shows Organizer - V.{0}.{1}.{2}.{3}", version.Major, version.MajorRevision, version.Minor, version.MinorRevision);
-
-            //this.Width = SystemParameters.WorkArea.Width - (SystemParameters.WorkArea.Width * .3);
-            //this.Height = SystemParameters.WorkArea.Height - (SystemParameters.WorkArea.Height * .3);
+            this.Title = string.Format("TV Shows Organizer - V.{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
         }
     }
 }
