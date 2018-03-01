@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DTO\EpisodeDTO.cs" />
+    <Compile Include="DTO\TorrentInfoDTO.cs" />
     <Compile Include="Migrations\201802162021249_DB Creation.cs" />
     <Compile Include="Migrations\201802162021249_DB Creation.Designer.cs">
       <DependentUpon>201802162021249_DB Creation.cs</DependentUpon>

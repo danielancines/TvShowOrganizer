@@ -219,5 +219,8 @@
   <ItemGroup>
     <Resource Include="Images\StartDownloadIcon128x128.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\RemoveIcon128x128.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

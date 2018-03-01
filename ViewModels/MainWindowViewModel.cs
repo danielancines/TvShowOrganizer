@@ -46,15 +46,11 @@ namespace Labs.WPF.TorrentDownload.ViewModels
             this.ExitCommand = new DelegateCommand<object>(this.Execute_ExitCommand);
             this.UpdateCommand = new DelegateCommand<object>(this.Execute_UpdateCommand);
             this.MarkEpisodeAsDownloadedCommand = new DelegateCommand<object>(this.Execute_MarkEpisodeAsDownloadedCommand);
+            this.DeleteEpisodeCommand = new DelegateCommand<object>(this.Execute_DeleteEpisodeCommand);
             this.Episodes = new SeachableObservableCollection<EpisodeDTO>();
 
             this.SearchAndDownloadButtonLabel = "Search Torrents";
             this.SearchAndDownloadButtonImage = "/images/TorrentIcon128x128.png";
-        }
-
-        private void Execute_MarkEpisodeAsDownloadedCommand(object obj)
-        {
-            this.MarkEpisodeAsDownloaded(this.SelectedEpisode);
         }
 
         #endregion
@@ -67,6 +63,7 @@ namespace Labs.WPF.TorrentDownload.ViewModels
         public DelegateCommand<object> ExitCommand { get; private set; }
         public DelegateCommand<object> UpdateCommand { get; private set; }
         public DelegateCommand<object> MarkEpisodeAsDownloadedCommand { get; private set; }
+        public DelegateCommand<object> DeleteEpisodeCommand { get; private set; }
 
         #endregion
 
@@ -146,7 +143,8 @@ namespace Labs.WPF.TorrentDownload.ViewModels
             {
                 this.SearchAndDownloadButtonLabel = "Search Torrents";
                 this.SearchAndDownloadButtonImage = "/images/TorrentIcon128x128.png";
-            }else
+            }
+            else
             {
                 this.SearchAndDownloadButtonLabel = "Start Download";
                 this.SearchAndDownloadButtonImage = "/images/StartDownloadIcon128x128.png";
@@ -213,6 +211,23 @@ namespace Labs.WPF.TorrentDownload.ViewModels
         #endregion
 
         #region Private Methods
+
+        private void Execute_DeleteEpisodeCommand(object obj)
+        {
+            if (this.SelectedEpisode == null)
+                return;
+
+            if (this._messageService.Show(string.Format("{0}\n{1}", "Confirm remove?", this.SelectedEpisode.Name), "Attention", MessageBoxButton.YesNo, MessageBoxImage.Exclamation) == MessageBoxResult.Yes)
+            {
+                if (this._episodeRepository.Remove(this.SelectedEpisode))
+                    this.Episodes.Remove(this.SelectedEpisode);
+            }
+        }
+
+        private void Execute_MarkEpisodeAsDownloadedCommand(object obj)
+        {
+            this.MarkEpisodeAsDownloaded(this.SelectedEpisode);
+        }
 
         private void ChangeShowingDownloadedNotNotify(bool value)
         {
@@ -347,7 +362,7 @@ namespace Labs.WPF.TorrentDownload.ViewModels
             List<Torrent> torrents = new List<Torrent>();
             var links = await this._torrentService.GetLinks(episode.TvShow.Name, episode.Season.ToString("00"), episode.Number.ToString("00"));
             foreach (var item in links)
-                torrents.Add(new Torrent(episode.ID, item.Item1, item.Item2));
+                torrents.Add(new Torrent(episode.ID, item.Name, item.MagnetLink, item.Seeders, item.Leechers));
 
             var foundWindowId = Guid.NewGuid();
             var foundWindow = this._container.Resolve<FoundLinksView>(new ParameterOverride("torrents", torrents), new ParameterOverride("windowId", foundWindowId));
@@ -371,7 +386,17 @@ namespace Labs.WPF.TorrentDownload.ViewModels
 
         private void FilterExistingItems(string searchExistingItemsTerm)
         {
-            this.Episodes.FilterItems(e => e.TvShow.Name.ToLower().Contains(searchExistingItemsTerm.ToLower()));
+            if (string.IsNullOrWhiteSpace(searchExistingItemsTerm))
+            {
+                this.Episodes.ClearFilter();
+                return;
+            }
+
+            Func<EpisodeDTO, bool> predicate = new Func<EpisodeDTO, bool>(e => e.TvShow.Name.ToLower().Contains(searchExistingItemsTerm.ToLower()));
+            if (searchExistingItemsTerm.Contains("episode:"))
+                predicate = new Func<EpisodeDTO, bool>(e => e.Name.ToLower().Contains(searchExistingItemsTerm.Split(':')[1].ToLower()));
+
+            this.Episodes.FilterItems(predicate);
         }
 
         #endregion

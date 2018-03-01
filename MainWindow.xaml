@@ -41,7 +41,7 @@
                     </RibbonApplicationMenu>
                 </Ribbon.ApplicationMenu>
                 <RibbonTab Header="Tv Shows">
-                    <RibbonGroup Header="Actions">
+                    <RibbonGroup Header="Episodes">
                         <RibbonButton Command="{Binding UpdateCommand}" 
                                       LargeImageSource="/images/refreshicon128x128.png"
                                       Label="Update"
@@ -50,13 +50,16 @@
                         <RibbonButton Command="{Binding MarkEpisodeAsDownloadedCommand}" IsEnabled="{Binding SelectedEpisode, FallbackValue=false, Converter={StaticResource NullToBooleanConverter}}"
                                       LargeImageSource="/images/CheckIcon128x128.png"
                                       Label="Set Download"
-                                      ToolTip="Mark episode as downloaded">
-                        </RibbonButton>
+                                      ToolTip="Mark episode as downloaded"/>
                         <RibbonButton Command="{Binding StartDownloadCommand}" IsEnabled="{Binding SelectedEpisode, FallbackValue=false, Converter={StaticResource NullToBooleanConverter}}" 
                                       LargeImageSource="{Binding SearchAndDownloadButtonImage}"
                                       Label="{Binding SearchAndDownloadButtonLabel}"
                                       ToolTip="Search for torrents links"
                                       ToolTipDescription="Search for torrents links"/>
+                        <RibbonButton Command="{Binding DeleteEpisodeCommand}" IsEnabled="{Binding SelectedEpisode, FallbackValue=false, Converter={StaticResource NullToBooleanConverter}}"
+                                      LargeImageSource="/images/RemoveIcon128x128.png"
+                                      Label="Remove"
+                                      ToolTip="Remove selected episode"/>
                     </RibbonGroup>
                     <RibbonGroup Header="Visualization">
                         <RibbonToggleButton Label="Show Downloaded"

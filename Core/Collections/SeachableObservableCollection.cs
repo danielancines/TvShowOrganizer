@@ -14,6 +14,7 @@ namespace Labs.WPF.Core.Collections
             this._internalItems = new List<T>();
         }
 
+        private Func<T, bool> _predicate;
         private List<T> _filteredItems;
         private List<T> _internalItems;
 
@@ -25,8 +26,16 @@ namespace Labs.WPF.Core.Collections
 
         public void FilterItems(Func<T, bool> predicate)
         {
-            this._filteredItems.Clear();
-            this._filteredItems.AddRange(this._internalItems.Where(predicate));
+            this._predicate = predicate;
+            //this._filteredItems.Clear();
+            //this._filteredItems.AddRange(this._internalItems.Where(predicate));
+            if (this.CollectionChanged != null)
+                this.CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+        }
+
+        public void ClearFilter()
+        {
+            this._predicate = null;
             if (this.CollectionChanged != null)
                 this.CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
@@ -65,14 +74,37 @@ namespace Labs.WPF.Core.Collections
 
         public IEnumerator<T> GetEnumerator()
         {
-            return this._filteredItems.GetEnumerator();
+            if (this._predicate == null)
+                return this._internalItems.GetEnumerator();
+            else
+                return this._internalItems.Where(this._predicate).GetEnumerator();
         }
 
-        public bool Remove(T item) => this._internalItems.Remove(item);
+        public bool Remove(T item)
+        {
+            var result = this._internalItems.Remove(item);
+            var position = this._internalItems.IndexOf(item);
+
+            if (position > -1)
+            {
+                if (this.CollectionChanged != null)
+                    this.CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item, position));
+            }
+            else
+            {
+                if (this.CollectionChanged != null)
+                    this.CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            }
+
+            return result;
+        }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return this._filteredItems.GetEnumerator();
+            if (this._predicate == null)
+                return this._internalItems.GetEnumerator();
+            else
+                return this._internalItems.Where(this._predicate).GetEnumerator();
         }
     }
 }

@@ -7,16 +7,15 @@ namespace Labs.WPF.TvShowOrganizer.Data.Repositories.Interface
 {
     public interface IEpisodeRepository
     {
-        Episode GetById(Guid id);
-        Episode GetBySerieId(int serieId);
-        IEnumerable<Episode> AllEpisodes();
+        EpisodeDTO GetById(Guid id);
+        IEnumerable<EpisodeDTO> AllEpisodes();
         IEnumerable<EpisodeDTO> NotDownloadedEpisodes();
         IEnumerable<EpisodeDTO> DownloadedEpisodes();
         EpisodeDTO GetLastEpisodeBySeasonAndFirstAired(Guid serieID);
         int Add(Episode episode);
         int AddRange(IEnumerable<Episode> episodes);
         bool Update(EpisodeDTO episode);
-        bool Remove(Episode episode);
+        bool Remove(EpisodeDTO episode);
         bool UpdateTorrentURI(Guid id, string uri);
         bool Exists(Guid id);
         bool ExistsByEpisodeId(int id);

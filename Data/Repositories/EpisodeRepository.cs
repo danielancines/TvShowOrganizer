@@ -41,9 +41,9 @@ namespace Labs.WPF.TvShowOrganizer.Data.Repositories
             return this._context.SaveChanges();
         }
 
-        public IEnumerable<Episode> AllEpisodes()
+        public IEnumerable<EpisodeDTO> AllEpisodes()
         {
-            return this._context.Episodes;
+            return this._context.Episodes.Select(e=>new EpisodeDTO(e));
         }
 
         public IEnumerable<EpisodeDTO> NotDownloadedEpisodes()
@@ -69,19 +69,23 @@ namespace Labs.WPF.TvShowOrganizer.Data.Repositories
             return null;
         }
 
-        public Episode GetById(Guid id)
+        public EpisodeDTO GetById(Guid id)
         {
-            throw new NotImplementedException();
+            var episode = this._context.Episodes.FirstOrDefault(e => e.ID.Equals(id));
+            if (episode == null)
+                return null;
+            else
+                return new EpisodeDTO(episode);
         }
 
-        public Episode GetBySerieId(int serieId)
+        public bool Remove(EpisodeDTO episodeDTO)
         {
-            throw new NotImplementedException();
-        }
+            var episode = this._context.Episodes.FirstOrDefault(e => e.ID.Equals(episodeDTO.ID));
+            if (episode == null)
+                return false;
 
-        public bool Remove(Episode episode)
-        {
-            throw new NotImplementedException();
+            this._context.Episodes.Remove(episode);
+            return this._context.SaveChanges() >= 1;
         }
 
         public bool Update(EpisodeDTO episodeDTO)

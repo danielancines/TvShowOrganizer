@@ -1,4 +1,5 @@
 ﻿using HtmlAgilityPack;
+using Labs.WPF.TvShowOrganizer.Data.DTO;
 using Labs.WPF.TvShowOrganizer.Services.Contracts;
 using System;
 using System.Collections.Generic;
@@ -27,19 +28,14 @@ namespace Labs.WPF.TvShowOrganizer.Services
 
         #region ITorrentService Members
 
-        public Task<List<Tuple<string, string>>> GetLinks(string tvShowName, string season, string number)
+        public Task<List<TorrentInfoDTO>> GetLinks(string tvShowName, string season, string number)
         {
             if (!this._internetService.HasInternetConnection())
             {
                 return null;
             }
 
-            if (!this._internetService.HasInternetConnection())
-            {
-                return null;
-            }
-
-            List<Tuple<string, string>> links = new List<Tuple<string, string>>();
+            List<TorrentInfoDTO> links = new List<TorrentInfoDTO>();
             WebClient client = new WebClient();
             var task = client.DownloadStringTaskAsync(string.Format(@"https://thepiratebay.org/search/{0} s{1}e{2}", tvShowName, season, number));
 
@@ -52,8 +48,20 @@ namespace Labs.WPF.TvShowOrganizer.Services
                 if (mainResultTable is null)
                     return;
 
-                foreach (var item in mainResultTable.Descendants("td").Where(t => t.InnerHtml.Contains("magnet")))
+                foreach (var item in mainResultTable.Descendants("tr").Where(t => t.InnerHtml.Contains("magnet")))
                 {
+                    var episodeInfo = mainResultTable.Descendants("td").FirstOrDefault(t => t.InnerHtml.Contains("magnet"));
+                    if (episodeInfo == null)
+                        continue;
+
+                    int seeders = 0, leechers = 0;
+                    var seedersInfo = item.Descendants("td").Where(x => x.Attributes.Contains("align")).FirstOrDefault();
+                    var leechersInfo = item.Descendants("td").Where(x => x.Attributes.Contains("align")).LastOrDefault();
+                    if (seedersInfo != null)
+                        seeders = Convert.ToInt32(seedersInfo.InnerText);
+                    if (leechersInfo != null)
+                        leechers = Convert.ToInt32(leechersInfo.InnerText);
+
                     var episodeName = string.Empty;
                     var magnetLink = string.Empty;
                     var nameNode = item.Descendants("a").FirstOrDefault(a => a.Attributes.Contains("class") && a.Attributes["class"].Value == "detLink");
@@ -63,18 +71,17 @@ namespace Labs.WPF.TvShowOrganizer.Services
                     if (!episodeName.Contains("720p"))
                         continue;
 
-                    var magnetLinkNode = item.Descendants("a").FirstOrDefault(a => a.Attributes.Contains("href") && a.Attributes["href"].Value.Contains("magnet:?xt"));
+                    var magnetLinkNode = episodeInfo.Descendants("a").FirstOrDefault(a => a.Attributes.Contains("href") && a.Attributes["href"].Value.Contains("magnet:?xt"));
                     if (magnetLinkNode != null)
                         magnetLink = magnetLinkNode.Attributes["href"].Value;
 
-                    links.Add(new Tuple<string, string>(episodeName, magnetLink));
+                    links.Add(new TorrentInfoDTO(episodeName, magnetLink, seeders, leechers));
                 }
-
             }).ContinueWith(l =>
             {
                 return links;
             });
-        } 
+        }
 
         #endregion
     }
