@@ -1,5 +1,4 @@
 ﻿using Labs.WPF.Core;
-using Labs.WPF.Core.Collections;
 using Labs.WPF.Core.Handlers;
 using Labs.WPF.Core.Notifiers;
 using Labs.WPF.TorrentDownload.Model;
@@ -14,11 +13,13 @@ using Prism.Events;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Data;
 using Unity;
 using Unity.Resolution;
 
@@ -47,7 +48,9 @@ namespace Labs.WPF.TorrentDownload.ViewModels
             this.UpdateCommand = new DelegateCommand<object>(this.Execute_UpdateCommand);
             this.MarkEpisodeAsDownloadedCommand = new DelegateCommand<object>(this.Execute_MarkEpisodeAsDownloadedCommand);
             this.DeleteEpisodeCommand = new DelegateCommand<object>(this.Execute_DeleteEpisodeCommand);
-            this.Episodes = new SeachableObservableCollection<EpisodeDTO>();
+            this.GroupByCommand = new DelegateCommand<string>(this.Execute_GroupByCommand);
+            this.Episodes = new ObservableCollection<EpisodeDTO>();
+            this.InitializeEpisodesViewSource();
 
             this.SearchAndDownloadButtonLabel = "Search Torrents";
             this.SearchAndDownloadButtonImage = "/images/TorrentIcon128x128.png";
@@ -64,6 +67,7 @@ namespace Labs.WPF.TorrentDownload.ViewModels
         public DelegateCommand<object> UpdateCommand { get; private set; }
         public DelegateCommand<object> MarkEpisodeAsDownloadedCommand { get; private set; }
         public DelegateCommand<object> DeleteEpisodeCommand { get; private set; }
+        public DelegateCommand<string> GroupByCommand { get; private set; }
 
         #endregion
 
@@ -85,7 +89,8 @@ namespace Labs.WPF.TorrentDownload.ViewModels
 
         #region Properties
 
-        public SeachableObservableCollection<EpisodeDTO> Episodes { get; private set; }
+        public ObservableCollection<EpisodeDTO> Episodes { get; private set; }
+        public CollectionView EpisodesViewSource { get; private set; }
 
         private string _searchTerm;
         public string SearchTerm
@@ -111,7 +116,7 @@ namespace Labs.WPF.TorrentDownload.ViewModels
                     return;
 
                 this._searchExistingItemsTerm = value;
-                this.FilterExistingItems(this._searchExistingItemsTerm);
+                this.EpisodesViewSource.Refresh();
                 this.RaisePropertyChanged();
             }
         }
@@ -211,6 +216,36 @@ namespace Labs.WPF.TorrentDownload.ViewModels
         #endregion
 
         #region Private Methods
+
+        private void Execute_GroupByCommand(string groupByOption)
+        {
+            this.EpisodesViewSource.GroupDescriptions.Clear();
+            switch (groupByOption)
+            {
+                case "TvShowName":
+                    this.EpisodesViewSource.GroupDescriptions.Add(new PropertyGroupDescription("TvShow.Name"));
+                    break;
+            }
+        }
+
+        private void InitializeEpisodesViewSource()
+        {
+            this.EpisodesViewSource = (CollectionView)CollectionViewSource.GetDefaultView(this.Episodes);
+            this.EpisodesViewSource.Filter = (object obj) =>
+            {
+                var episodeDTO = obj as EpisodeDTO;
+                if (episodeDTO == null || string.IsNullOrWhiteSpace(this.SearchExistingItemsTerm))
+                    return true;
+
+                if (this.SearchExistingItemsTerm.ToLower().Contains("episode:"))
+                {
+                    var splitTerm = this.SearchExistingItemsTerm.Split(':');
+                    return episodeDTO.Name.ToLower().Contains(splitTerm[1]);
+                }
+
+                return episodeDTO.TvShow.Name.ToLower().Contains(this.SearchExistingItemsTerm.ToLower());
+            };
+        }
 
         private void Execute_DeleteEpisodeCommand(object obj)
         {
@@ -384,21 +419,6 @@ namespace Labs.WPF.TorrentDownload.ViewModels
             this._episodeRepository.UpdateTorrentURI(episode.ID, episode.TorrentURI);
         }
 
-        private void FilterExistingItems(string searchExistingItemsTerm)
-        {
-            if (string.IsNullOrWhiteSpace(searchExistingItemsTerm))
-            {
-                this.Episodes.ClearFilter();
-                return;
-            }
-
-            Func<EpisodeDTO, bool> predicate = new Func<EpisodeDTO, bool>(e => e.TvShow.Name.ToLower().Contains(searchExistingItemsTerm.ToLower()));
-            if (searchExistingItemsTerm.Contains("episode:"))
-                predicate = new Func<EpisodeDTO, bool>(e => e.Name.ToLower().Contains(searchExistingItemsTerm.Split(':')[1].ToLower()));
-
-            this.Episodes.FilterItems(predicate);
-        }
-
         #endregion
 
         #region INotify Members
@@ -416,6 +436,7 @@ namespace Labs.WPF.TorrentDownload.ViewModels
 
             if (messageResult == MessageBoxResult.No)
             {
+                episode.SetDownloadedPropertyNotNotify(true);
                 this._episodeRepository.Update(episode);
                 this.Episodes.Remove(episode);
                 return;

@@ -2,6 +2,7 @@ namespace Labs.WPF.TvShowOrganizer.Data.Migrations
 {
     using Labs.WPF.TvShowOrganizer.Data.Model;
     using System;
+    using System.Linq;
     using System.Data.Entity.Migrations;
 
     internal sealed class Configuration : DbMigrationsConfiguration<Labs.WPF.TvShowOrganizer.Data.TvShowOrganizerContext>
@@ -9,6 +10,10 @@ namespace Labs.WPF.TvShowOrganizer.Data.Migrations
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
+
+            var migrator = new DbMigrator(this);
+            if (migrator.GetPendingMigrations().Any())
+                migrator.Update();
         }
 
         protected override void Seed(TvShowOrganizerContext context)

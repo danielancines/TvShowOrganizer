@@ -50,7 +50,7 @@ namespace Labs.WPF.TvShowOrganizer.Services
 
                 foreach (var item in mainResultTable.Descendants("tr").Where(t => t.InnerHtml.Contains("magnet")))
                 {
-                    var episodeInfo = mainResultTable.Descendants("td").FirstOrDefault(t => t.InnerHtml.Contains("magnet"));
+                    var episodeInfo = item.Descendants("td").FirstOrDefault(t => t.InnerHtml.Contains("magnet"));
                     if (episodeInfo == null)
                         continue;
 

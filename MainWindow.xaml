@@ -79,15 +79,21 @@
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="5*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Text="Search Shows:"
                                Margin="5"/>
                     <TextBox Text="{Binding SearchExistingItemsTerm, UpdateSourceTrigger=PropertyChanged}"
                              Grid.Column="1" Margin="5"/>
-                    <DataGrid Grid.Row="1" Grid.ColumnSpan="2" 
+                    <TextBlock Text="Group by:" Grid.Column="2" Margin="5"/>
+                    <Button Content="Tv Show Name" Grid.Column="3" Margin="5" Command="{Binding GroupByCommand}" CommandParameter="TvShowName"/>
+                    <Button Content="Reset" Grid.Column="4" Margin="5" Command="{Binding GroupByCommand}"/>
+                    <DataGrid Grid.Row="1" Grid.ColumnSpan="6" 
                               Margin="5"
-                              ItemsSource="{Binding Episodes}" 
+                              ItemsSource="{Binding EpisodesViewSource}" 
                               CanUserAddRows="False" 
                               CanUserDeleteRows="False" 
                               AutoGenerateColumns="False"
@@ -106,11 +112,11 @@
                             </Style>
                         </DataGrid.RowStyle>
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Tv Show" Binding="{Binding TvShow.Name}" Width="Auto"/>
-                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="Auto"/>
-                            <DataGridTextColumn Header="Season" Binding="{Binding Season}"/>
-                            <DataGridTextColumn Header="Number" Binding="{Binding Number}"/>
-                            <DataGridTextColumn Header="Aired" Binding="{Binding FirstAired, StringFormat=dd/MM/yyyy}"/>
+                            <DataGridTextColumn Header="Tv Show" Binding="{Binding TvShow.Name}" Width="Auto" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="Auto" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Season" Binding="{Binding Season}" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Number" Binding="{Binding Number}" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Aired" Binding="{Binding FirstAired, StringFormat=dd/MM/yyyy}" IsReadOnly="True"/>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Grid>

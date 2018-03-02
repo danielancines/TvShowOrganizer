@@ -123,6 +123,10 @@
     <Compile Include="Migrations\201802281137504_varchar overview.Designer.cs">
       <DependentUpon>201802281137504_varchar overview.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201803021007402_Field Overview MaxLength Max.cs" />
+    <Compile Include="Migrations\201803021007402_Field Overview MaxLength Max.Designer.cs">
+      <DependentUpon>201803021007402_Field Overview MaxLength Max.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="DTO\DTOBase\DTOObject.cs" />
     <Compile Include="Model\Episode.cs" />
@@ -189,6 +193,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201802281137504_varchar overview.resx">
       <DependentUpon>201802281137504_varchar overview.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803021007402_Field Overview MaxLength Max.resx">
+      <DependentUpon>201803021007402_Field Overview MaxLength Max.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

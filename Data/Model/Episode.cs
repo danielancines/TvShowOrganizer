@@ -29,7 +29,6 @@ namespace Labs.WPF.TvShowOrganizer.Data.Model
         [Required]
         public int Season { get; set; }
 
-        [MaxLength(1000)]
         public string Overview { get; set; }
 
         public DateTime? FirstAired { get; set; }
