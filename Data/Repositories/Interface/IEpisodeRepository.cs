@@ -11,6 +11,7 @@ namespace Labs.WPF.TvShowOrganizer.Data.Repositories.Interface
         IEnumerable<EpisodeDTO> AllEpisodes();
         IEnumerable<EpisodeDTO> NotDownloadedEpisodes();
         IEnumerable<EpisodeDTO> DownloadedEpisodes();
+        IEnumerable<EpisodeDTO> FutureEpisodes();
         EpisodeDTO GetLastEpisodeBySeasonAndFirstAired(Guid serieID);
         int Add(Episode episode);
         int AddRange(IEnumerable<Episode> episodes);

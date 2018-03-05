@@ -128,6 +128,15 @@ namespace Labs.WPF.TvShowOrganizer.Data.Repositories
                 .Select(e => new EpisodeDTO(e));
         }
 
+        public IEnumerable<EpisodeDTO> FutureEpisodes()
+        {
+            return this._context
+                .Episodes
+                .Include("TvShow")
+                .Where(e => e.FirstAired > DateTime.Now || !e.FirstAired.HasValue).ToList()
+                .Select(e => new EpisodeDTO(e));
+        }
+
         #endregion
     }
 }

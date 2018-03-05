@@ -13,7 +13,6 @@ using Prism.Events;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -49,6 +48,7 @@ namespace Labs.WPF.TorrentDownload.ViewModels
             this.MarkEpisodeAsDownloadedCommand = new DelegateCommand<object>(this.Execute_MarkEpisodeAsDownloadedCommand);
             this.DeleteEpisodeCommand = new DelegateCommand<object>(this.Execute_DeleteEpisodeCommand);
             this.GroupByCommand = new DelegateCommand<string>(this.Execute_GroupByCommand);
+            this.EditEpisodeCommand = new DelegateCommand<EpisodeDTO>(this.Execute_EditEpisodeCommand);
             this.Episodes = new ObservableCollection<EpisodeDTO>();
             this.InitializeEpisodesViewSource();
 
@@ -68,6 +68,7 @@ namespace Labs.WPF.TorrentDownload.ViewModels
         public DelegateCommand<object> MarkEpisodeAsDownloadedCommand { get; private set; }
         public DelegateCommand<object> DeleteEpisodeCommand { get; private set; }
         public DelegateCommand<string> GroupByCommand { get; private set; }
+        public DelegateCommand<EpisodeDTO> EditEpisodeCommand { get; private set; }
 
         #endregion
 
@@ -171,6 +172,21 @@ namespace Labs.WPF.TorrentDownload.ViewModels
             }
         }
 
+        private bool _showingFutureEpisodes;
+        public bool ShowingFutureEpisodes
+        {
+            get { return this._showingFutureEpisodes; }
+            set
+            {
+                if (this._showingFutureEpisodes == value)
+                    return;
+
+                this._showingFutureEpisodes = value;
+                this.LoadFutureEpisodes(value);
+                this.RaisePropertyChanged();
+            }
+        }
+
         private bool _canDownload = false;
         public bool CanDownload
         {
@@ -216,6 +232,11 @@ namespace Labs.WPF.TorrentDownload.ViewModels
         #endregion
 
         #region Private Methods
+
+        private void Execute_EditEpisodeCommand(EpisodeDTO episode)
+        {
+            
+        }
 
         private void Execute_GroupByCommand(string groupByOption)
         {
@@ -268,6 +289,24 @@ namespace Labs.WPF.TorrentDownload.ViewModels
         {
             this._showingDonwloaded = value;
             this.RaisePropertyChanged("ShowingDonwloaded");
+        }
+
+        private void LoadFutureEpisodes(bool show)
+        {
+            this.Episodes.Clear();
+            this.IsBusy = true;
+            this.BusyContent = "Updating list...";
+            Task.Factory.StartNew(() =>
+            {
+                if (show)
+                    return this._episodeRepository.FutureEpisodes().OrderBy(e => e.Season).ThenBy(e => e.Number);
+                else
+                    return this._episodeRepository.NotDownloadedEpisodes().OrderBy(e => e.Season).ThenBy(e => e.Number);
+            }).ContinueWith(episodes =>
+            {
+                this.Episodes.AddRange(episodes.Result);
+                this.IsBusy = false;
+            }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         private void LoadDownloadedEpisodes(bool show)

@@ -65,6 +65,9 @@
                         <RibbonToggleButton Label="Show Downloaded"
                                             IsChecked="{Binding ShowingDonwloaded}"
                                             LargeImageSource="/images/DownloadedIcon128x128.png"/>
+                        <RibbonToggleButton Label="Future Episodes"
+                                            IsChecked="{Binding ShowingFutureEpisodes}"
+                                            LargeImageSource="/images/FutureIcon128x128.png"/>
                     </RibbonGroup>
                     <RibbonGroup Header="Search">
                         <RibbonTextBox Label="New Shows:" Text="{Binding SearchTerm, UpdateSourceTrigger=PropertyChanged}" Command="{Binding SearchCommand}" TextBoxWidth="300"/>
@@ -99,6 +102,11 @@
                               AutoGenerateColumns="False"
                               ScrollViewer.VerticalScrollBarVisibility="Auto"
                               SelectedItem="{Binding SelectedEpisode}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseDoubleClick">
+                                <i:InvokeCommandAction Command="{Binding EditEpisodeCommand}" CommandParameter="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
                         <DataGrid.RowStyle>
                             <Style TargetType="DataGridRow">
                                 <Style.Triggers>

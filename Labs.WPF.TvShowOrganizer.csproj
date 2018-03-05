@@ -130,6 +130,9 @@
     <Compile Include="ViewModels\FoundLinksViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\SearchWindowViewModel.cs" />
+    <Compile Include="Views\EpisodeEditView.xaml.cs">
+      <DependentUpon>EpisodeEditView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\FoundLinksView.xaml.cs">
       <DependentUpon>FoundLinksView.xaml</DependentUpon>
     </Compile>
@@ -148,6 +151,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\EpisodeEditView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\FoundLinksView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -221,6 +228,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\RemoveIcon128x128.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\FutureIcon128x128.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
