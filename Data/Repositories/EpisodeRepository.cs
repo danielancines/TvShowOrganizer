@@ -3,6 +3,7 @@ using Labs.WPF.TvShowOrganizer.Data.Model;
 using Labs.WPF.TvShowOrganizer.Data.Repositories.Interface;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 
 namespace Labs.WPF.TvShowOrganizer.Data.Repositories
@@ -48,20 +49,22 @@ namespace Labs.WPF.TvShowOrganizer.Data.Repositories
 
         public IEnumerable<EpisodeDTO> NotDownloadedEpisodes()
         {
+            var date = DateTime.Now;
             return this._context
                 .Episodes
                 .Include("TvShow")
-                .Where(e => !e.Downloaded && e.FirstAired < DateTime.Now).ToList()
+                .Where(e => !e.Downloaded && DbFunctions.CreateDateTime(e.FirstAired.Value.Year, e.FirstAired.Value.Month, e.FirstAired.Value.Day, 0, 0, 0) < DbFunctions.CreateDateTime(date.Year, date.Month, date.Day, 0, 0, 0)).ToList()
                 .Select(e => new EpisodeDTO(e));
         }
 
         public EpisodeDTO GetLastEpisodeBySeasonAndFirstAired(Guid serieID)
         {
+            var date = DateTime.Now;
             var episode = this._context
                 .Episodes
                 .Where(e => e.TvShowId.Equals(serieID))
                 .OrderByDescending(e => e.Season).ThenByDescending(e => e.Number)
-                .FirstOrDefault(e => e.FirstAired < DateTime.Now);
+                .FirstOrDefault(e => DbFunctions.CreateDateTime(e.FirstAired.Value.Year, e.FirstAired.Value.Month, e.FirstAired.Value.Day, 0, 0, 0) < DbFunctions.CreateDateTime(date.Year, date.Month, date.Day, 0, 0, 0));
 
             if (episode != null)
                 return new EpisodeDTO(episode);
@@ -121,19 +124,21 @@ namespace Labs.WPF.TvShowOrganizer.Data.Repositories
 
         public IEnumerable<EpisodeDTO> DownloadedEpisodes()
         {
+            var date = DateTime.Now;
             return this._context
                 .Episodes
                 .Include("TvShow")
-                .Where(e => e.Downloaded && e.FirstAired < DateTime.Now).ToList()
+                .Where(e => e.Downloaded && DbFunctions.CreateDateTime(e.FirstAired.Value.Year, e.FirstAired.Value.Month, e.FirstAired.Value.Day, 0, 0, 0) < DbFunctions.CreateDateTime(date.Year, date.Month, date.Day, 0, 0, 0)).ToList()
                 .Select(e => new EpisodeDTO(e));
         }
 
         public IEnumerable<EpisodeDTO> FutureEpisodes()
         {
+            var date = DateTime.Now;
             return this._context
                 .Episodes
                 .Include("TvShow")
-                .Where(e => e.FirstAired >= DateTime.Now || !e.FirstAired.HasValue).ToList()
+                .Where(e => DbFunctions.CreateDateTime(e.FirstAired.Value.Year, e.FirstAired.Value.Month, e.FirstAired.Value.Day, 0, 0, 0) >= DbFunctions.CreateDateTime(date.Year, date.Month, date.Day, 0, 0, 0) || !e.FirstAired.HasValue).ToList()
                 .Select(e => new EpisodeDTO(e));
         }
 
