@@ -51,7 +51,7 @@ namespace Labs.WPF.TvShowOrganizer.Data.Repositories
             return this._context
                 .Episodes
                 .Include("TvShow")
-                .Where(e => !e.Downloaded && e.FirstAired <= DateTime.Now).ToList()
+                .Where(e => !e.Downloaded && e.FirstAired < DateTime.Now).ToList()
                 .Select(e => new EpisodeDTO(e));
         }
 
@@ -61,7 +61,7 @@ namespace Labs.WPF.TvShowOrganizer.Data.Repositories
                 .Episodes
                 .Where(e => e.TvShowId.Equals(serieID))
                 .OrderByDescending(e => e.Season).ThenByDescending(e => e.Number)
-                .FirstOrDefault(e => e.FirstAired <= DateTime.Now);
+                .FirstOrDefault(e => e.FirstAired < DateTime.Now);
 
             if (episode != null)
                 return new EpisodeDTO(episode);
@@ -124,7 +124,7 @@ namespace Labs.WPF.TvShowOrganizer.Data.Repositories
             return this._context
                 .Episodes
                 .Include("TvShow")
-                .Where(e => e.Downloaded && e.FirstAired <= DateTime.Now).ToList()
+                .Where(e => e.Downloaded && e.FirstAired < DateTime.Now).ToList()
                 .Select(e => new EpisodeDTO(e));
         }
 
@@ -133,7 +133,7 @@ namespace Labs.WPF.TvShowOrganizer.Data.Repositories
             return this._context
                 .Episodes
                 .Include("TvShow")
-                .Where(e => e.FirstAired > DateTime.Now || !e.FirstAired.HasValue).ToList()
+                .Where(e => e.FirstAired >= DateTime.Now || !e.FirstAired.HasValue).ToList()
                 .Select(e => new EpisodeDTO(e));
         }
 
