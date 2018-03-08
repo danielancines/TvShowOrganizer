@@ -125,8 +125,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Events\FinishedEditEpisodeEvent.cs" />
     <Compile Include="Events\TorrentSelectedEvent.cs" />
     <Compile Include="Model\Torrent.cs" />
+    <Compile Include="ViewModels\EditEpisodeViewModel.cs" />
     <Compile Include="ViewModels\FoundLinksViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\SearchWindowViewModel.cs" />
@@ -231,6 +233,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\FutureIcon128x128.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\EditIcon128x128.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

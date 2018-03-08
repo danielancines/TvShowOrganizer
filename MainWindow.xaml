@@ -56,6 +56,10 @@
                                       Label="{Binding SearchAndDownloadButtonLabel}"
                                       ToolTip="Search for torrents links"
                                       ToolTipDescription="Search for torrents links"/>
+                        <RibbonButton Command="{Binding EditEpisodeCommand}" IsEnabled="{Binding SelectedEpisode, FallbackValue=false, Converter={StaticResource NullToBooleanConverter}}"
+                                      LargeImageSource="/images/EditIcon128x128.png"
+                                      Label="Edit"
+                                      ToolTip="Edit selected episode"/>
                         <RibbonButton Command="{Binding DeleteEpisodeCommand}" IsEnabled="{Binding SelectedEpisode, FallbackValue=false, Converter={StaticResource NullToBooleanConverter}}"
                                       LargeImageSource="/images/RemoveIcon128x128.png"
                                       Label="Remove"

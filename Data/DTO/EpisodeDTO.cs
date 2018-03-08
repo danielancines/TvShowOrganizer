@@ -38,7 +38,6 @@ namespace Labs.WPF.TvShowOrganizer.Data.DTO
         public string Overview { get; set; }
         public double LastUpdated { get; set; }
         public DateTime? FirstAired { get; set; }
-
         public INotify<EpisodeDTO> Notifier { get; set; }
 
         private bool _downloaded;

@@ -1,6 +1,7 @@
 ﻿using Labs.WPF.Core;
 using Labs.WPF.Core.Handlers;
 using Labs.WPF.Core.Notifiers;
+using Labs.WPF.TorrentDownload.Events;
 using Labs.WPF.TorrentDownload.Model;
 using Labs.WPF.TorrentDownload.Views;
 using Labs.WPF.TvShowOrganizer.Data.DTO;
@@ -84,7 +85,9 @@ namespace Labs.WPF.TorrentDownload.ViewModels
         private IMessageService _messageService;
         private IInternetService _internetService;
         private Guid _searchWindowId;
+        private Guid _editWindowId;
         private SubscriptionToken _selectedTorrentToken;
+        private SubscriptionToken _finishedEditEpisode;
 
         #endregion
 
@@ -235,7 +238,23 @@ namespace Labs.WPF.TorrentDownload.ViewModels
 
         private void Execute_EditEpisodeCommand(EpisodeDTO episode)
         {
-            
+            this._finishedEditEpisode = this._eventAggregator.GetEvent<FinishedEditEpisodeEvent>().Subscribe((editedEpisode) =>
+            {
+                this._eventAggregator.GetEvent<FinishedEditEpisodeEvent>().Unsubscribe(this._finishedEditEpisode);
+                if (this._episodeRepository.Update(editedEpisode))
+                {
+                    var indexOf = this.Episodes.IndexOf(editedEpisode);
+                    this.Episodes.RemoveAt(indexOf);
+
+                    if (!editedEpisode.Downloaded)
+                        this.Episodes.Insert(indexOf, editedEpisode);
+                }
+            });
+
+            this._editWindowId = Guid.NewGuid();
+            var editWindow = this._container.Resolve<EpisodeEditView>(new ParameterOverride("episode", this.SelectedEpisode), new ParameterOverride("windowId", this._editWindowId));
+            ViewsHandler.Instance.RegisterView(editWindow, this._editWindowId);
+            editWindow.ShowDialog();
         }
 
         private void Execute_GroupByCommand(string groupByOption)

@@ -98,6 +98,8 @@ namespace Labs.WPF.TvShowOrganizer.Data.Repositories
                 return false;
 
             episode.Downloaded = episodeDTO.Downloaded;
+            episode.TorrentURI = string.IsNullOrWhiteSpace(episodeDTO.TorrentURI) ? null : episodeDTO.TorrentURI;
+            episode.FirstAired = episodeDTO.FirstAired;
 
             return this._context.SaveChanges() >= 1;
         }

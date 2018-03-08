@@ -1,16 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Labs.WPF.TorrentDownload.ViewModels;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using Unity.Attributes;
 
 namespace Labs.WPF.TorrentDownload.Views
 {
@@ -22,6 +12,15 @@ namespace Labs.WPF.TorrentDownload.Views
         public EpisodeEditView()
         {
             InitializeComponent();
+        }
+
+        [Dependency]
+        public EditEpisodeViewModel ViewModel
+        {
+            set
+            {
+                this.DataContext = value;
+            }
         }
     }
 }
