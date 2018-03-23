@@ -20,6 +20,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Forms;
 using Unity;
 using Unity.Resolution;
 
@@ -50,6 +51,7 @@ namespace Labs.WPF.TorrentDownload.ViewModels
             this.DeleteEpisodeCommand = new DelegateCommand<object>(this.Execute_DeleteEpisodeCommand);
             this.GroupByCommand = new DelegateCommand<string>(this.Execute_GroupByCommand);
             this.EditEpisodeCommand = new DelegateCommand<EpisodeDTO>(this.Execute_EditEpisodeCommand);
+            this.SearchFilesCommand = new DelegateCommand<object>(this.Execute_SearchFilesCommand);
             this.Episodes = new ObservableCollection<EpisodeDTO>();
             this.InitializeEpisodesViewSource();
 
@@ -70,6 +72,7 @@ namespace Labs.WPF.TorrentDownload.ViewModels
         public DelegateCommand<object> DeleteEpisodeCommand { get; private set; }
         public DelegateCommand<string> GroupByCommand { get; private set; }
         public DelegateCommand<EpisodeDTO> EditEpisodeCommand { get; private set; }
+        public DelegateCommand<object> SearchFilesCommand { get; private set; }
 
         #endregion
 
@@ -236,6 +239,18 @@ namespace Labs.WPF.TorrentDownload.ViewModels
 
         #region Private Methods
 
+        private void Execute_SearchFilesCommand(object obj)
+        {
+            FolderBrowserDialog fbd = new FolderBrowserDialog();
+            if (fbd.ShowDialog() != DialogResult.OK)
+                return;
+
+            var searchFilesWindowId = Guid.NewGuid();
+            var searchFilesWindow = this._container.Resolve<SearchFilesView>(new ParameterOverride("windowId", searchFilesWindowId), new ParameterOverride("folderPath", fbd.SelectedPath));
+            ViewsHandler.Instance.RegisterView(searchFilesWindow, searchFilesWindowId);
+            searchFilesWindow.ShowDialog();
+        }
+
         private void Execute_EditEpisodeCommand(EpisodeDTO episode)
         {
             this._finishedEditEpisode = this._eventAggregator.GetEvent<FinishedEditEpisodeEvent>().Subscribe((editedEpisode) =>
@@ -368,8 +383,8 @@ namespace Labs.WPF.TorrentDownload.ViewModels
 
         private void Execute_LoadedCommand(Episode obj)
         {
-            this.LoadEpisodes();
-            this.StartInternetConnectionVerifier();
+            //this.LoadEpisodes();
+            //this.StartInternetConnectionVerifier();
         }
 
         private void StartInternetConnectionVerifier()

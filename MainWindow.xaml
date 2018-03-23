@@ -77,6 +77,14 @@
                         <RibbonTextBox Label="New Shows:" Text="{Binding SearchTerm, UpdateSourceTrigger=PropertyChanged}" Command="{Binding SearchCommand}" TextBoxWidth="300"/>
                     </RibbonGroup>
                 </RibbonTab>
+                <RibbonTab Header="Subtitles">
+                    <RibbonGroup Header="Actions">
+                        <RibbonButton Command="{Binding SearchFilesCommand}"
+                                      LargeImageSource="/images/SearchIcon128x128.png"
+                                      Label="Search"
+                                      ToolTip="Search tvshow files"/>
+                    </RibbonGroup>
+                </RibbonTab>
             </Ribbon>
             <Border BorderThickness="1" BorderBrush="Black" CornerRadius="2" Grid.Row="2" Grid.ColumnSpan="5" Margin="5" >
                 <Grid Margin="5">

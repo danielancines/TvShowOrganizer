@@ -1,0 +1,46 @@
+﻿<Window x:Class="Labs.WPF.TorrentDownload.Views.SearchFilesView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Labs.WPF.TorrentDownload.Views"
+        mc:Ignorable="d"
+        Title="SearchFilesView" Height="570" Width="1000" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="100"/>
+        </Grid.ColumnDefinitions>
+        <Ribbon Grid.ColumnSpan="2">
+            <RibbonTab Header="Subtitles">
+                <RibbonGroup Header="Actions">
+                    <RibbonButton Command="{Binding SearchSubtitlesCommand}"
+                                      LargeImageSource="/images/SearchIcon128x128.png"
+                                      Label="Find Subtitles"
+                                      ToolTip="Find subtitles for selected files"/>
+                    <RibbonButton Command="{Binding OpenFolderCommand}" IsEnabled="{Binding HasMultipleEntries, FallbackValue=false, Converter={StaticResource NullToBooleanConverter}}"
+                                      LargeImageSource="/images/FolderIcon128x128.png"
+                                      Label="Open Folder"
+                                      ToolTip="Open folder"/>
+                </RibbonGroup>
+            </RibbonTab>
+        </Ribbon>
+        <DataGrid Grid.Row="1" Grid.ColumnSpan="2" 
+                  Margin="5" 
+                  AutoGenerateColumns="False" 
+                  CanUserAddRows="False" CanUserDeleteRows="False" 
+                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                  ItemsSource="{Binding Files}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name"/>
+                <DataGridTextColumn Header="Status"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <Button Content="Ok" Grid.Row="2" Grid.Column="1" Margin="5"/>
+    </Grid>
+</Window>
