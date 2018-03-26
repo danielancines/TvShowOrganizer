@@ -127,6 +127,14 @@
     <Compile Include="Migrations\201803021007402_Field Overview MaxLength Max.Designer.cs">
       <DependentUpon>201803021007402_Field Overview MaxLength Max.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201803261705230_Number of Seasons field.cs" />
+    <Compile Include="Migrations\201803261705230_Number of Seasons field.Designer.cs">
+      <DependentUpon>201803261705230_Number of Seasons field.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803261720422_Number of Episodes field.cs" />
+    <Compile Include="Migrations\201803261720422_Number of Episodes field.Designer.cs">
+      <DependentUpon>201803261720422_Number of Episodes field.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="DTO\DTOBase\DTOObject.cs" />
     <Compile Include="Model\Episode.cs" />
@@ -196,6 +204,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201803021007402_Field Overview MaxLength Max.resx">
       <DependentUpon>201803021007402_Field Overview MaxLength Max.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803261705230_Number of Seasons field.resx">
+      <DependentUpon>201803261705230_Number of Seasons field.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803261720422_Number of Episodes field.resx">
+      <DependentUpon>201803261720422_Number of Episodes field.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

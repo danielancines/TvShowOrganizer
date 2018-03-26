@@ -49,6 +49,9 @@ namespace Labs.WPF.TvShowOrganizer.Data.Model
 
         public double LastUpdated { get; set; }
 
+        public int NumberOfSeasons { get; set; }
+        public int NumberOfEpisodes { get; set; }
+
         [ForeignKey("Episode")]
         public virtual ICollection<Episode> Episodes { get; set; }
 
