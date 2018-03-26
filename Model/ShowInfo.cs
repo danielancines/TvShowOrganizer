@@ -16,7 +16,7 @@ namespace Labs.WPF.TorrentDownload.Model
         #region Fields
 
         private Regex _nameRegex = new Regex(@"[A-Z]\d{2}[A-Z]\d{2}?", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        private Regex _nameRegex = new Regex(@"[A-Z]\d{2}[A-Z]\d{2}?", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        //private Regex _nameRegex = new Regex(@"[A-Z]\d{2}[A-Z]\d{2}?", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         #endregion
 

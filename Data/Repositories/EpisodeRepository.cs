@@ -12,16 +12,16 @@ namespace Labs.WPF.TvShowOrganizer.Data.Repositories
     {
         #region Constructor
 
-        public EpisodeRepository(TvShowOrganizerContext context)
+        public EpisodeRepository()
         {
-            this._context = context;
+            //this._context = context;
         }
 
         #endregion
 
         #region Fields
 
-        private TvShowOrganizerContext _context;
+        //private TvShowOrganizerContext _context;
 
         #endregion
 
@@ -32,116 +32,168 @@ namespace Labs.WPF.TvShowOrganizer.Data.Repositories
             if (this.Exists(episode.ID))
                 return 0;
 
-            this._context.Episodes.Add(episode);
-            return this._context.SaveChanges();
+            using (var context = new TvShowOrganizerContext())
+            {
+                context.Episodes.Add(episode);
+                return context.SaveChanges();
+            }
         }
 
         public int AddRange(IEnumerable<Episode> episodes)
         {
-            this._context.Episodes.AddRange(episodes);
-            return this._context.SaveChanges();
+            using (var context = new TvShowOrganizerContext())
+            {
+                context.Episodes.AddRange(episodes);
+                return context.SaveChanges();
+            }
         }
 
         public IEnumerable<EpisodeDTO> AllEpisodes()
         {
-            return this._context.Episodes.Select(e=>new EpisodeDTO(e));
+            using (var context = new TvShowOrganizerContext())
+            {
+                return context.Episodes.Select(e => new EpisodeDTO(e));
+            }
         }
 
         public IEnumerable<EpisodeDTO> NotDownloadedEpisodes()
         {
             var date = DateTime.Now;
-            return this._context
-                .Episodes
-                .Include("TvShow")
-                .Where(e => !e.Downloaded && DbFunctions.CreateDateTime(e.FirstAired.Value.Year, e.FirstAired.Value.Month, e.FirstAired.Value.Day, 0, 0, 0) < DbFunctions.CreateDateTime(date.Year, date.Month, date.Day, 0, 0, 0)).ToList()
-                .Select(e => new EpisodeDTO(e));
+
+            using (var context = new TvShowOrganizerContext())
+            {
+                return context.Episodes
+                    .Include("TvShow")
+                    .Where(e => !e.Downloaded && DbFunctions.CreateDateTime(e.FirstAired.Value.Year, e.FirstAired.Value.Month, e.FirstAired.Value.Day, 0, 0, 0) < DbFunctions.CreateDateTime(date.Year, date.Month, date.Day, 0, 0, 0)).ToList()
+                    .Select(e => new EpisodeDTO(e));
+            }
         }
 
         public EpisodeDTO GetLastEpisodeBySeasonAndFirstAired(Guid serieID)
         {
-            var date = DateTime.Now;
-            var episode = this._context
-                .Episodes
-                .Where(e => e.TvShowId.Equals(serieID))
-                .OrderByDescending(e => e.Season).ThenByDescending(e => e.Number)
-                .FirstOrDefault(e => DbFunctions.CreateDateTime(e.FirstAired.Value.Year, e.FirstAired.Value.Month, e.FirstAired.Value.Day, 0, 0, 0) < DbFunctions.CreateDateTime(date.Year, date.Month, date.Day, 0, 0, 0));
+            using (var context = new TvShowOrganizerContext())
+            {
+                var date = DateTime.Now;
+                var episode = context
+                    .Episodes
+                    .Where(e => e.TvShowId.Equals(serieID))
+                    .OrderByDescending(e => e.Season).ThenByDescending(e => e.Number)
+                    .FirstOrDefault(e => DbFunctions.CreateDateTime(e.FirstAired.Value.Year, e.FirstAired.Value.Month, e.FirstAired.Value.Day, 0, 0, 0) < DbFunctions.CreateDateTime(date.Year, date.Month, date.Day, 0, 0, 0));
 
-            if (episode != null)
-                return new EpisodeDTO(episode);
+                if (episode != null)
+                    return new EpisodeDTO(episode);
 
-            return null;
+                return null;
+            }
         }
 
         public EpisodeDTO GetById(Guid id)
         {
-            var episode = this._context.Episodes.FirstOrDefault(e => e.ID.Equals(id));
-            if (episode == null)
-                return null;
-            else
-                return new EpisodeDTO(episode);
+            using (var context = new TvShowOrganizerContext())
+            {
+                var episode = context.Episodes.FirstOrDefault(e => e.ID.Equals(id));
+                if (episode == null)
+                    return null;
+                else
+                    return new EpisodeDTO(episode);
+            }
         }
 
         public bool Remove(EpisodeDTO episodeDTO)
         {
-            var episode = this._context.Episodes.FirstOrDefault(e => e.ID.Equals(episodeDTO.ID));
-            if (episode == null)
-                return false;
+            using (var context = new TvShowOrganizerContext())
+            {
+                var episode = context.Episodes.FirstOrDefault(e => e.ID.Equals(episodeDTO.ID));
+                if (episode == null)
+                    return false;
 
-            this._context.Episodes.Remove(episode);
-            return this._context.SaveChanges() >= 1;
+                context.Episodes.Remove(episode);
+                return context.SaveChanges() >= 1;
+            }
         }
 
         public bool Update(EpisodeDTO episodeDTO)
         {
-            var episode = this._context.Episodes.FirstOrDefault(e => e.ID.Equals(episodeDTO.ID));
-            if (episode == null)
-                return false;
+            using (var context = new TvShowOrganizerContext())
+            {
+                var episode = context.Episodes.FirstOrDefault(e => e.ID.Equals(episodeDTO.ID));
+                if (episode == null)
+                    return false;
 
-            episode.Downloaded = episodeDTO.Downloaded;
-            episode.TorrentURI = string.IsNullOrWhiteSpace(episodeDTO.TorrentURI) ? null : episodeDTO.TorrentURI;
-            episode.FirstAired = episodeDTO.FirstAired;
+                episode.Downloaded = episodeDTO.Downloaded;
+                episode.TorrentURI = string.IsNullOrWhiteSpace(episodeDTO.TorrentURI) ? null : episodeDTO.TorrentURI;
+                episode.FirstAired = episodeDTO.FirstAired;
+                episode.Name = episodeDTO.Name;
 
-            return this._context.SaveChanges() >= 1;
+                return context.SaveChanges() >= 1;
+            }
         }
 
         public bool UpdateTorrentURI(Guid id, string uri)
         {
-            var episode = this._context.Episodes.FirstOrDefault(e => e.ID.Equals(id));
-            if (episode == null)
-                return false;
+            using (var context = new TvShowOrganizerContext())
+            {
+                var episode = context.Episodes.FirstOrDefault(e => e.ID.Equals(id));
+                if (episode == null)
+                    return false;
 
-            episode.TorrentURI = uri;
-            return this._context.SaveChanges() > 1;
+                episode.TorrentURI = uri;
+                return context.SaveChanges() > 1;
+            }
         }
 
         public bool Exists(Guid id)
         {
-            return this._context.Episodes.Any(e => e.ID.Equals(id));
+            using (var context = new TvShowOrganizerContext())
+            {
+                return context.Episodes.Any(e => e.ID.Equals(id));
+            }
         }
 
         public bool ExistsByEpisodeId(int id)
         {
-            return this._context.Episodes.Any(e => e.EpisodeId.Equals(id));
+            using (var context = new TvShowOrganizerContext())
+            {
+                return context.Episodes.Any(e => e.EpisodeId.Equals(id));
+            }
         }
 
         public IEnumerable<EpisodeDTO> DownloadedEpisodes()
         {
-            var date = DateTime.Now;
-            return this._context
-                .Episodes
-                .Include("TvShow")
-                .Where(e => e.Downloaded && DbFunctions.CreateDateTime(e.FirstAired.Value.Year, e.FirstAired.Value.Month, e.FirstAired.Value.Day, 0, 0, 0) < DbFunctions.CreateDateTime(date.Year, date.Month, date.Day, 0, 0, 0)).ToList()
-                .Select(e => new EpisodeDTO(e));
+            using (var context = new TvShowOrganizerContext())
+            {
+                var date = DateTime.Now;
+                return context
+                    .Episodes
+                    .Include("TvShow")
+                    .Where(e => e.Downloaded && DbFunctions.CreateDateTime(e.FirstAired.Value.Year, e.FirstAired.Value.Month, e.FirstAired.Value.Day, 0, 0, 0) < DbFunctions.CreateDateTime(date.Year, date.Month, date.Day, 0, 0, 0)).ToList()
+                    .Select(e => new EpisodeDTO(e));
+            }
         }
 
         public IEnumerable<EpisodeDTO> FutureEpisodes()
         {
-            var date = DateTime.Now;
-            return this._context
-                .Episodes
-                .Include("TvShow")
-                .Where(e => DbFunctions.CreateDateTime(e.FirstAired.Value.Year, e.FirstAired.Value.Month, e.FirstAired.Value.Day, 0, 0, 0) >= DbFunctions.CreateDateTime(date.Year, date.Month, date.Day, 0, 0, 0) || !e.FirstAired.HasValue).ToList()
-                .Select(e => new EpisodeDTO(e));
+            using (var context = new TvShowOrganizerContext())
+            {
+                var date = DateTime.Now;
+                return context
+                    .Episodes
+                    .Include("TvShow")
+                    .Where(e => DbFunctions.CreateDateTime(e.FirstAired.Value.Year, e.FirstAired.Value.Month, e.FirstAired.Value.Day, 0, 0, 0) >= DbFunctions.CreateDateTime(date.Year, date.Month, date.Day, 0, 0, 0) || !e.FirstAired.HasValue).ToList()
+                    .Select(e => new EpisodeDTO(e));
+            }
+        }
+
+        public EpisodeDTO GetByEpisodeId(int id)
+        {
+            using (var context = new TvShowOrganizerContext())
+            {
+                var episode = context.Episodes.FirstOrDefault(e => e.EpisodeId.Equals(id));
+                if (episode == null)
+                    return null;
+
+                return new EpisodeDTO(episode);
+            }
         }
 
         #endregion

@@ -383,8 +383,8 @@ namespace Labs.WPF.TorrentDownload.ViewModels
 
         private void Execute_LoadedCommand(Episode obj)
         {
-            //this.LoadEpisodes();
-            //this.StartInternetConnectionVerifier();
+            this.LoadEpisodes();
+            this.StartInternetConnectionVerifier();
         }
 
         private void StartInternetConnectionVerifier()

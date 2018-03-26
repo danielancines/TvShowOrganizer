@@ -108,13 +108,20 @@ namespace Labs.WPF.TvShowOrganizer.Services
         private async Task<bool> SaveNewEpisodes(Guid serieID, int seriesID, int season, string baseUri, string apiKey)
         {
             var result = false;
-            foreach (var episode in await this.GetEpisodesData(serieID, seriesID, season.ToString(), baseUri,apiKey))
+            foreach (var episode in await this.GetEpisodesData(serieID, seriesID, season.ToString(), baseUri, apiKey))
             {
-                if (this._episodeRepository.ExistsByEpisodeId(episode.EpisodeId))
-                    continue;
-
-                this._episodeRepository.Add(episode);
-                result = true;
+                var episodeDTO = this._episodeRepository.GetByEpisodeId(episode.EpisodeId);
+                if (episodeDTO != null)
+                {
+                    episodeDTO.FirstAired = episode.FirstAired;
+                    episodeDTO.Name = episode.Name;
+                    this._episodeRepository.Update(episodeDTO);
+                }
+                else
+                {
+                    this._episodeRepository.Add(episode);
+                    result = true;
+                }
             }
 
             return result;
@@ -146,7 +153,7 @@ namespace Labs.WPF.TvShowOrganizer.Services
                 }
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
 
             }

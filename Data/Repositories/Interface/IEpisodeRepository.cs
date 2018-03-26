@@ -20,5 +20,6 @@ namespace Labs.WPF.TvShowOrganizer.Data.Repositories.Interface
         bool UpdateTorrentURI(Guid id, string uri);
         bool Exists(Guid id);
         bool ExistsByEpisodeId(int id);
+        EpisodeDTO GetByEpisodeId(int id);
     }
 }
